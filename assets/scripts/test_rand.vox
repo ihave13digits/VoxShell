@@ -1,0 +1,8 @@
+int r = rand;
+int t = rand;
+
+echo "int r = " r "\n";
+echo "r - ? = " r - t "\n";
+
+delete r;
+delete t;

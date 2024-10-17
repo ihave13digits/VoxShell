@@ -1,0 +1,9 @@
+int i = 128;
+float pi = 3.14159;
+string hello = "Hello, world!  ";
+
+echo hello "My favorite number is " i " and my favorite decimal is " pi "\n";
+
+delete i;
+delete pi;
+delete hello;

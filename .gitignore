@@ -1,0 +1,12 @@
+build/CMakeFiles
+build/Testing
+build/CMakeCache.txt
+build/Makefile
+
+*.o
+.cache
+~*
+.*.swp
+
+*.cmake
+*.tcl
