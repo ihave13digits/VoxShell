@@ -120,6 +120,10 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
         else { computing=false; break; }
         //PrintTokens(condensed);
     }
+    for (int i=0; i<int(condensed.size()); i++)
+    {
+        if (condensed.at(i).GetName()!="") { stack.PushVariable(condensed.at(i)); }
+    }
     //PrintTokens(condensed);
     return condensed;
 }

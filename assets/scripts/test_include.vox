@@ -1,6 +1,6 @@
-include "test_variable.vox";
-include "test_logic.vox";
-include "test_math.vox";
-include "test_rand.vox";
-include "test_echo.vox";
-include "test_exit.vox";
+include("test_variable.vox");
+include("test_logic.vox");
+include("test_math.vox");
+include("test_rand.vox");
+include("test_echo.vox");
+include("test_exit.vox");

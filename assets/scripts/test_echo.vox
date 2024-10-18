@@ -1,10 +1,7 @@
-echo;
+echo();
 
-echo "Hello, world!";
+echo("Hello, world!");
 
-echo "Chain " "of " "args!" "\n";
+echo("Chain " "of " "args!" "\n");
 
-echo "Secret " "echo";
-
-echo; echo;
-echo "- test_echo.vox complete -";
+echo("Secret " "echo");

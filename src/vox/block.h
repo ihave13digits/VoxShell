@@ -22,20 +22,25 @@ public:
 
     Block(int _scope, std::vector<Instruction> _stack={});
 
-    bool VariableNameExists(std::string name);
-    int Size();
+    int GetSize();
+
     int GetScope();
     void SetScope(int _scope);
+
     void PopFront();
     void PushBack(Instruction instruction);
-    void PushVariable(Token token);
 
+    bool VariableNameExists(std::string name);
+    void PushVariable(Token token);
+    void DeleteVariable(std::string name);
     Token GetVariable(std::string name);
     void SetVariable(std::string name, Token token);
-    void DeleteVariable(std::string name);
     std::vector<Token> GetVariables();
+    void SetVariables(std::unordered_map<std::string, Token> _variables);
+    
     void SetBlocks(std::vector<Block> _blocks);
     std::vector<Block> GetBlocks();
+    
     Instruction GetNextInstruction();
 
 };

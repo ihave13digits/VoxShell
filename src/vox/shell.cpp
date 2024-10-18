@@ -268,7 +268,7 @@ void Shell::ParseScript(Script script)
     std::vector<std::string> lines = script.GetLines();
     for (int i=0; i<int(lines.size()); i++)
     {
-        if (stack.Size()<stack_limit)
+        if (stack.GetSize()<stack_limit)
         {
             ParseLine(lines[i]);
         }
@@ -276,7 +276,7 @@ void Shell::ParseScript(Script script)
     }
 }
 
-///*
+/*
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
     std::vector<Instruction> instructions;
@@ -307,8 +307,8 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
     }
     return instructions;
 }
-//*/
-/*
+*/
+///*
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
     std::vector<Instruction> instructions;
@@ -322,21 +322,20 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
         for (int i=0; i<int(tokens.size()); i++)
         {
             std::string value = tokens.at(i).GetValue();
-            if (tokens[i].GetName()!="") { state = "Variable"; call_index = i; break; }
+            //if (tokens[i].GetName()!="") { state = "Variable"; call_index = i; break; }
             //if (tokens[i].GetName()!="" && tokens[i].GetType()==SyntaxType::TYPE_UNKNOWN) { state = "Variable"; call_index = i; break; }
-            else if (value==Operator::keys[Operator::OPERATOR_PAR_L]) { left_index = i; }
+            if (value==Operator::keys[Operator::OPERATOR_PAR_L]) { left_index = i; }
             else if (value==Operator::keys[Operator::OPERATOR_PAR_R]) { right_index = i; break; }
-            else if (FunctionExists(value) && state!="Variable") { state = "Function"; call_index = i; }
+            else if (FunctionExists(value)) { state = "Function"; call_index = i; }
             else if (value==Syntax::keys[Syntax::SYNTAX_END]) { break; }
         }
-        if (state=="Variable")
+        /*if (state=="Variable")
         {
             stack.PushVariable(tokens.at(call_index));
             std::string var_name = tokens.at(call_index).GetName();
-            //tokens.at(call_index) = stack.GetVariable(var_name);
             tokens.erase(tokens.begin()+call_index);
-        }
-        else if (state=="Function" && (call_index>-1 && left_index>call_index && right_index>left_index))
+        }*/
+        if (state=="Function" && (call_index>-1 && left_index>call_index && right_index>left_index))
         {
             std::vector<Token> _tokens;
             std::string call_name = tokens.at(call_index).GetValue();
@@ -362,14 +361,14 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
     //std::cout <<"END\n"<<std::endl;
     return instructions;
 }
-*/
+//*/
 
 void Shell::Evaluate(std::string line)
 {
     int callback_count = 0;
     std::cout << "----------------------------------------------------------------" << std::endl;
     ParseLine(line);
-    while (stack.Size()>0)
+    while (stack.GetSize()>0)
     {
         if (!IsUserEngaged()) { ClearStack(); break; }
         Instruction instruction = stack.GetNextInstruction();
@@ -380,6 +379,6 @@ void Shell::Evaluate(std::string line)
         callback_count++;
     }
     std::cout << "----------------------------------------------------------------" << std::endl;
-    std::cout << "Scope:" << stack.Size() << " Blocks:" << stack.GetBlocks().size() << " Variables:" << stack.GetVariables().size() << std::endl;
+    std::cout << "Scope:" << stack.GetSize() << " Blocks:" << stack.GetBlocks().size() << " Variables:" << stack.GetVariables().size() << std::endl;
     std::cout << "----------------------------------------------------------------" << std::endl;
 }

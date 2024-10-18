@@ -1,1 +1,2 @@
-exit;
+echo("Test Complete.  Exiting");
+exit();

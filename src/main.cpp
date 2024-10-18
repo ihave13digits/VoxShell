@@ -7,65 +7,100 @@ Shell shell = Shell();
 
 std::vector<Token> ExecuteTest(Instruction instruction)
 {
-    std::string value = instruction.GetArgument(1).GetValue();
+    std::string value = instruction.GetArgument(0).GetValue();
     std::cout << value << std::endl;
     return {};
 }
 
 std::vector<Token> ExecuteDelete(Instruction instruction)
 {
-    std::string value = instruction.GetArgument(1).GetName();
+    std::string value = instruction.GetArgument(0).GetName();
     shell.DeleteVariable(value);
     return {};
 }
 
 std::vector<Token> ExecuteEcho(Instruction instruction)
 {
-    //shell.PrintTokens(instruction.GetArguments());
-    std::string value = instruction.GetArgument(1).GetValue();
-    if (value=="") { std::cout << std::endl; return {Token()}; }
-    std::string end = "";
-    std::string output = "";
-    std::string last_value = "";
-    std::string current_value = "";
-    int i = 1;
-    while (current_value!=SyntaxGlobal::blank_instruction)
+    std::vector<Token> args = instruction.GetArguments();
+    const int S = args.size();
+    if (S==0)
     {
-        Token token = instruction.GetArgument(i);
-        output += last_value;
-        last_value = current_value;
-        
-        if      (token.GetType()==SyntaxType::TYPE_BOOLEAN) { current_value = Boolean::alias[std::stoi(token.GetValue())]; }
-        /*else if (token.GetType()==SyntaxType::TYPE_UNKNOWN)
-        {
-            std::string var_name = token.GetName();
-            if (var_name!="")
-            {
-                current_value = shell.GetStack().GetVariable(var_name).GetValue();
-            }
-        }*/
-        else { current_value = token.GetValue(); }
-        if (current_value!=SyntaxGlobal::blank_instruction) { end = current_value; }
-        i++;
+        std::cout << std::endl;
     }
-    if (output=="") { std::cout << end << std::endl; }
+    else if (S==1)
+    {
+        Token token = args.at(0);
+        if      (token.GetType()==SyntaxType::TYPE_BOOLEAN) { std::cout << Boolean::alias[std::stoi(token.GetValue())]; }
+        else if (token.GetType()==SyntaxType::TYPE_STRING)
+        {
+            std::string last_char = "";
+            std::string value = token.GetValue();
+            const int VS = value.size();
+            for (int c=0; c<VS; c++)
+            {
+                std::string this_char=value.substr(c, 1);
+                if (this_char=="\\" && c+1<VS)
+                {
+                    std::string next_char=value.substr(c+1, 1);
+                    if      (next_char=="n") { std::cout << "\n"; }
+                    else if (next_char=="t") { std::cout << "\t"; }
+                    else if (next_char=="v") { std::cout << "\v"; }
+                    else if (next_char=="f") { std::cout << "\f"; }
+                    else if (next_char=="r") { std::cout << "\r"; }
+                    else if (next_char=="b") { std::cout << "\b"; }
+                    else if (next_char=="a") { std::cout << "\a"; }
+                }
+                else if (last_char!="\\") { std::cout << this_char; }
+                last_char = this_char;
+            }
+        }
+        else { std::cout << token.GetValue() << std::endl; }
+        std::cout << std::endl;
+    }
     else
     {
-        if (end!="\\n" && end!=SyntaxGlobal::blank_instruction)
+        for (int i=0; i<S-1; i++)
         {
-            std::cout << output << end;
+            Token token = args.at(i);
+            std::string value = token.GetValue();
+            if      (token.GetType()==SyntaxType::TYPE_BOOLEAN)
+            {
+                std::cout << Boolean::alias[std::stoi(value)];
+            }
+            else if (token.GetType()==SyntaxType::TYPE_STRING)
+            {
+                const int VS = value.size();
+                std::string last_char = "";
+                for (int c=0; c<VS; c++)
+                {
+                    std::string this_char=value.substr(c, 1);
+                    if (this_char=="\\" && c+1<VS)
+                    {
+                        std::string next_char=value.substr(c+1, 1);
+                        if      (next_char=="n") { std::cout << "\n"; }
+                        else if (next_char=="t") { std::cout << "\t"; }
+                        else if (next_char=="v") { std::cout << "\v"; }
+                        else if (next_char=="f") { std::cout << "\f"; }
+                        else if (next_char=="r") { std::cout << "\r"; }
+                        else if (next_char=="b") { std::cout << "\b"; }
+                        else if (next_char=="a") { std::cout << "\a"; }
+                    }
+                    else if (last_char!="\\") { std::cout << this_char; }
+                    last_char = this_char;
+                }
+            }
+            else { std::cout << value; }
         }
-        else
-        {
-            std::cout << output << std::endl;
-        }
+        std::string end = args.at(S-1).GetValue();
+        if (end=="\\n") { std::cout << std::endl; }
+        else            { std::cout << end; }
     }
     return {};
 }
 
 std::vector<Token> ExecuteEval(Instruction instruction)
 {
-    std::string value = instruction.GetArgument(1).GetValue();
+    std::string value = instruction.GetArgument(0).GetValue();
     if (value==SyntaxGlobal::blank_instruction) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_UNINTELLIGIBLE_INPUT] << std::endl; return {Token()}; }
     shell.ParseLine(value);
     return {};
@@ -81,13 +116,13 @@ std::vector<Token> ExecuteExit(Instruction instruction)
 
 std::vector<Token> ExecuteIf(Instruction instruction)
 {
-    std::string value = instruction.GetArgument(1).GetValue();
+    std::string value = instruction.GetArgument(0).GetValue();
     return {};
 }
 
 std::vector<Token> ExecuteInclude(Instruction instruction)
 {
-    std::string value = instruction.GetArgument(1).GetValue();
+    std::string value = instruction.GetArgument(0).GetValue();
     if (value==SyntaxGlobal::blank_instruction) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_MISSING_ARGUMENTS] << std::endl; return {Token()}; }
     Script script = Script();
     script.LoadFile("assets/scripts/"+value);
@@ -97,7 +132,7 @@ std::vector<Token> ExecuteInclude(Instruction instruction)
 
 std::vector<Token> ExecuteSeedRandom(Instruction instruction)
 {
-    Token arg = instruction.GetArgument(1);
+    Token arg = instruction.GetArgument(0);
     if (arg.GetType()==SyntaxType::TYPE_INTEGER) { srand(std::stoi(arg.GetValue())); }
     else { srand(time(0)%100000); }
     return {};
@@ -106,12 +141,12 @@ std::vector<Token> ExecuteSeedRandom(Instruction instruction)
 std::vector<Token> ExecuteRandom(Instruction instruction)
 {
     int value = rand();
-    return {Token(instruction.GetArgument(1).GetIndex(), SyntaxType::TYPE_INTEGER, std::to_string(value))};
+    return {Token(instruction.GetArgument(0).GetIndex(), SyntaxType::TYPE_INTEGER, std::to_string(value))};
 }
 
 std::vector<Token> ExecuteCos(Instruction instruction)
 {
-    Token token = instruction.GetArgument(1);
+    Token token = instruction.GetArgument(0);
     float value = 0.0;
     if      (token.GetType()==SyntaxType::TYPE_INTEGER) { value = float(std::stoi(token.GetValue())); }
     else if (token.GetType()==SyntaxType::TYPE_DECIMAL) { value = std::stof(token.GetValue()); }
@@ -121,7 +156,7 @@ std::vector<Token> ExecuteCos(Instruction instruction)
 
 std::vector<Token> ExecuteSin(Instruction instruction)
 {
-    Token token = instruction.GetArgument(1);
+    Token token = instruction.GetArgument(0);
     float value = 0.0;
     if      (token.GetType()==SyntaxType::TYPE_INTEGER) { value = float(std::stoi(token.GetValue())); }
     else if (token.GetType()==SyntaxType::TYPE_DECIMAL) { value = std::stof(token.GetValue()); }
@@ -131,7 +166,7 @@ std::vector<Token> ExecuteSin(Instruction instruction)
 
 std::vector<Token> ExecuteTan(Instruction instruction)
 {
-    Token token = instruction.GetArgument(1);
+    Token token = instruction.GetArgument(0);
     float value = 0.0;
     if      (token.GetType()==SyntaxType::TYPE_INTEGER) { value = float(std::stoi(token.GetValue())); }
     else if (token.GetType()==SyntaxType::TYPE_DECIMAL) { value = std::stof(token.GetValue()); }
