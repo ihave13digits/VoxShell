@@ -61,7 +61,8 @@ int Shell::FirstEqualsIndex(std::vector<Token> tokens)
 Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
 {
     //PrintTokens(tokens);
-    Token v_name=tokens.at(operation_index-1), v_value=tokens.at(operation_index+1), v_type=tokens.at(operation_index-2), c=tokens.at(operation_index+2);
+    Token v_name=tokens.at(operation_index-1), v_value=tokens.at(operation_index+1), v_type;
+    if (operation_index>1) { v_type = tokens.at(operation_index-2); }
     Token solved = Token(v_name.GetIndex(), v_value.GetType(), v_value.GetValue(), SyntaxGlobal::unsolved_problem);
     int value_type=v_value.GetType(), type_type=v_type.GetType();
     std::string type_value=v_type.GetValue();
@@ -87,7 +88,25 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     }
     else
     {
-        std::cout << "Oofers" << std::endl;
+        std::string var_name = v_name.GetValue();
+        if (stack.VariableNameExists(var_name))
+        {
+            Token compare = stack.GetVariable(var_name);
+            if (compare.GetType()==v_value.GetType())
+            {
+                return Token(v_name.GetIndex(), value_type, v_value.GetValue(), v_name.GetValue());
+            }
+            else if (value_type==SyntaxType::TYPE_BUILT_IN && HasFunction(tokens))
+            {
+                Instruction instruction = GenerateInstructions(tokens).at(0);
+                std::vector<Token> fr = functions[v_value.GetValue()].Call(instruction);
+                //PrintTokens(fr);
+                if (fr.size()>0)
+                {
+                    return Token(v_name.GetIndex(), fr.at(0).GetType(), fr.at(0).GetValue(), v_name.GetValue());
+                }
+            }
+        }
     }
     return solved;
 }
@@ -115,7 +134,19 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
                 }
                 else { computing=false; break; }
             }
-            else { computing=false; break; }
+            else if (operation_index==1 && operation_index+1<int(condensed.size()))
+            {
+                Token solved = SolveEquals(operation_index, condensed);
+                if (solved.GetValue()!=SyntaxGlobal::unsolved_problem)
+                {
+                    for (int c=0; c<3; c++)
+                    {
+                        condensed.erase(condensed.begin()+(operation_index-1));
+                    }
+                    condensed.insert(condensed.begin()+(operation_index-1), solved);
+                }
+                else { computing=false; break; }
+            }
         }
         else { computing=false; break; }
         //PrintTokens(condensed);

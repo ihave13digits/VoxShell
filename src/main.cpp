@@ -114,6 +114,12 @@ std::vector<Token> ExecuteExit(Instruction instruction)
     return {};
 }
 
+std::vector<Token> ExecuteFor(Instruction instruction)
+{
+    std::string value = instruction.GetArgument(0).GetValue();
+    return {};
+}
+
 std::vector<Token> ExecuteIf(Instruction instruction)
 {
     std::string value = instruction.GetArgument(0).GetValue();
@@ -207,6 +213,7 @@ int main(int argc, char *argv[])
     shell.RegisterFunction("echo",    Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteEcho));
     shell.RegisterFunction("eval",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteEval));
     shell.RegisterFunction("exit",    Generic::Function( 0, ReturnType::RETURN_VOID, ExecuteExit));
+    shell.RegisterFunction("for",     Generic::Function( 3, ReturnType::RETURN_VOID, ExecuteFor));
     shell.RegisterFunction("if",      Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteIf));
     shell.RegisterFunction("include", Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteInclude));
     shell.RegisterFunction("seed",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteSeedRandom));
