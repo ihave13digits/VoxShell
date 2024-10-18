@@ -66,6 +66,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     Token solved = Token(v_name.GetIndex(), v_value.GetType(), v_value.GetValue(), SyntaxGlobal::unsolved_problem);
     int value_type=v_value.GetType(), type_type=v_type.GetType();
     std::string type_value=v_type.GetValue();
+    std::string val_name = v_value.GetValue(), var_name = v_name.GetValue();
     if (type_type==SyntaxType::TYPE_RETURN)
     {
         if ((type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN) ||
@@ -74,6 +75,11 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             (type_value==ReturnType::keys[ReturnType::RETURN_STRING] && value_type==SyntaxType::TYPE_STRING))
         {
             return Token(v_name.GetIndex(), value_type, v_value.GetValue(), v_name.GetValue());
+        }
+        else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
+        {
+            Token compare = stack.GetVariable(val_name);
+            return Token(v_name.GetIndex(), compare.GetType(), compare.GetValue(), var_name);
         }
         else if (value_type==SyntaxType::TYPE_BUILT_IN && HasFunction(tokens))
         {
@@ -88,13 +94,17 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     }
     else
     {
-        std::string var_name = v_name.GetValue();
         if (stack.VariableNameExists(var_name))
         {
             Token compare = stack.GetVariable(var_name);
             if (compare.GetType()==v_value.GetType())
             {
                 return Token(v_name.GetIndex(), value_type, v_value.GetValue(), v_name.GetValue());
+            }
+            else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
+            {
+                Token compare = stack.GetVariable(val_name);
+                return Token(v_name.GetIndex(), compare.GetType(), compare.GetValue(), var_name);
             }
             else if (value_type==SyntaxType::TYPE_BUILT_IN && HasFunction(tokens))
             {
