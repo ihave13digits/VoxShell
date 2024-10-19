@@ -130,9 +130,10 @@ int Shell::FirstParenthesesIndex(std::vector<Token> tokens)
 
 bool Shell::CanComputeToken(Token token)
 {
-    const int T = token.GetType();
+    //const int T = token.GetType();
     //if (T==SyntaxType::TYPE_BUILT_IN && FunctionExists(token.GetValue()) && FunctionReturns(token.GetValue())) { return true; }
-    return (T>=SyntaxType::TYPE_UNKNOWN && T<SyntaxType::TYPE_SYNTAX);
+    //return (T>=SyntaxType::TYPE_UNKNOWN && T<SyntaxType::TYPE_SYNTAX);
+    return (token.GetType()<SyntaxType::TYPE_SYNTAX);
 }
 
 
@@ -146,7 +147,6 @@ Token Shell::SolveUnary(Token a, Token o)
         int va = std::stoi(a.GetValue());
         token.SetType(SyntaxType::TYPE_BOOLEAN);
         if      (op==Operator::keys[Operator::OPERATOR_NOT]) { token.SetValue(std::to_string(va)); }
-        //else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va*-1)); }
     }
     else if (a.GetType()==SyntaxType::TYPE_INTEGER)
     {
@@ -167,13 +167,14 @@ Token Shell::SolveUnary(Token a, Token o)
         std::string va = a.GetValue();
         token.SetType(SyntaxType::TYPE_STRING);
         if      (op==Operator::keys[Operator::OPERATOR_NOT]) { token.SetValue(std::to_string(va.size()>0)); }
+        else if (op==Operator::keys[Operator::OPERATOR_SUB]) { std::string rev = va; std::reverse(rev.begin(), rev.end()); token.SetValue(rev); }
     }
     return token;
 }
 
 Token Shell::SolveMath(Token a, Token b, Token o)
 {
-    std::string name = a.GetName(); if (name=="") { name=b.GetName(); }
+    std::string name = a.GetName(); if (name=="" || name==SyntaxGlobal::unsolved_problem) { name=b.GetName(); }
     Token token = Token(a.GetIndex(), a.GetType(), SyntaxGlobal::unsolved_problem, name);
     std::string op = o.GetValue();
     if (a.GetType()==SyntaxType::TYPE_BOOLEAN)
@@ -257,7 +258,6 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=va&&(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=va||(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else { token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN); token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN]); }
-            //else { token.SetValue(SyntaxGlobal::unsolved_problem); }
         }
     }
     else if (a.GetType()==SyntaxType::TYPE_INTEGER)
@@ -463,9 +463,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { bool check=va.size()>=vb.size(); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(Boolean::keys[check]); }
             //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(Boolean::keys[check]); }
-            //else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=va&&vb; token.SetValue(Boolean::keys[check]); }
-            //else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=va||vb; token.SetValue(Boolean::keys[check]); }
-            //else { token.SetValue(SyntaxGlobal::unsolved_problem); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=((int(va.size())>0)&&(vb.size()>0)); token.SetValue(Boolean::keys[check]); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=((int(va.size())>0)||(vb.size()>0)); token.SetValue(Boolean::keys[check]); }
         }
     }
     return token;
@@ -572,17 +571,17 @@ std::vector<Token> Shell::ParseMath(std::vector<Token> tokens)
     int left_index=-1, right_index=-1;
     while (computing)
     {
+        bool left_is_func = false;
         left_index=-1; right_index=-1;
         for (int i=0; i<int(condensed.size()); i++)
         {
-            bool left_is_func = false;
-            if (i>0) { left_is_func = HasFunction({condensed.at(i-1)}); }
+            if (left_index>0) { left_is_func = HasFunction({condensed.at(left_index-1)}); }
             std::string value = condensed.at(i).GetValue();
-            if (value==Operator::keys[Operator::OPERATOR_PAR_L] && !left_is_func)
+            if (value==Operator::keys[Operator::OPERATOR_PAR_L] && left_is_func==false)
             {
                 left_index = i;
             }
-            else if (value==Operator::keys[Operator::OPERATOR_PAR_R])
+            else if (value==Operator::keys[Operator::OPERATOR_PAR_R] && left_is_func==false)
             {
                 if (left_index>-1)
                 {

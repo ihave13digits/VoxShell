@@ -56,6 +56,8 @@ namespace Syntax
         SYNTAX_QUOTES,
         SYNTAX_QUOTE,
         SYNTAX_COMMA,
+        SYNTAX_BLOCK_L,
+        SYNTAX_BLOCK_R,
         SYNTAX_END,
     };
     

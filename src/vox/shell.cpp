@@ -19,6 +19,61 @@ void Shell::SetUserEngaged(bool value)
 }
 
 
+
+bool Shell::VariableExists(std::string name)
+{
+    return (stack.VariableNameExists(name));
+}
+
+void Shell::DeleteVariable(std::string name)
+{
+    stack.DeleteVariable(name);
+}
+
+Token Shell::GetVariable(std::string name)
+{
+    return stack.GetVariable(name);
+}
+
+void Shell::SetVariable(std::string name, Token value)
+{
+    stack.SetVariable(name, value);
+}
+
+void Shell::ClearStack()
+{
+    stack = Block(0);
+}
+
+Block Shell::GetStack()
+{
+    return stack;
+}
+
+int Shell::GetStackLimit()
+{
+    return stack_limit;
+}
+
+void Shell::SetStackLimit(int _stack_limit)
+{
+    stack_limit = _stack_limit;
+}
+
+
+
+int Shell::GetScope()
+{
+    return current_scope;
+}
+
+void Shell::SetScope(int _scope)
+{
+    current_scope = _scope;
+}
+
+
+
 bool Shell::FunctionExists(std::string name)
 {
     return (functions.count(name)>0);
@@ -180,33 +235,6 @@ void Shell::PrintTokens(std::vector<Token> tokens)
 
 
 
-void Shell::DeleteVariable(std::string name)
-{
-    stack.DeleteVariable(name);
-}
-
-void Shell::ClearStack()
-{
-    stack = Block(0);
-}
-
-Block Shell::GetStack()
-{
-    return stack;
-}
-
-int Shell::GetStackLimit()
-{
-    return stack_limit;
-}
-
-void Shell::SetStackLimit(int _stack_limit)
-{
-    stack_limit = _stack_limit;
-}
-
-
-
 Token Shell::TokenizeSegment(std::string segment, int index)
 {
     int type = GetTokenType(segment);
@@ -248,13 +276,6 @@ void Shell::ParseLine(std::string line)
 {
     if (line.size()==0) { return; }
     std::vector<Token> tokens = TokenizeLine(line);
-    tokens = ParseQuotes(tokens);
-    tokens = ParseMath(tokens);
-    tokens = ParseEquals(tokens);
-    tokens = ParseVariables(tokens);
-    tokens = ParseMath(tokens);
-    tokens = ParseEquals(tokens);
-    tokens = ParseVariables(tokens);
     std::vector<Instruction> instructions = GenerateInstructions(tokens);
     for (int i=0; i<int(instructions.size()); i++)
     {
@@ -311,9 +332,12 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 ///*
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
+    tokens = ParseQuotes(tokens);
+    tokens = ParseVariables(tokens);
     std::vector<Instruction> instructions;
     std::string state = "";
     bool computing = true;
+    //std::cout <<"FirstPass:"<<std::endl;
     while (computing)
     {
         //PrintTokens(tokens);
@@ -322,19 +346,11 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
         for (int i=0; i<int(tokens.size()); i++)
         {
             std::string value = tokens.at(i).GetValue();
-            //if (tokens[i].GetName()!="") { state = "Variable"; call_index = i; break; }
-            //if (tokens[i].GetName()!="" && tokens[i].GetType()==SyntaxType::TYPE_UNKNOWN) { state = "Variable"; call_index = i; break; }
             if (value==Operator::keys[Operator::OPERATOR_PAR_L]) { left_index = i; }
             else if (value==Operator::keys[Operator::OPERATOR_PAR_R]) { right_index = i; break; }
             else if (FunctionExists(value)) { state = "Function"; call_index = i; }
             else if (value==Syntax::keys[Syntax::SYNTAX_END]) { break; }
         }
-        /*if (state=="Variable")
-        {
-            stack.PushVariable(tokens.at(call_index));
-            std::string var_name = tokens.at(call_index).GetName();
-            tokens.erase(tokens.begin()+call_index);
-        }*/
         if (state=="Function" && (call_index>-1 && left_index>call_index && right_index>left_index))
         {
             std::vector<Token> _tokens;
@@ -353,12 +369,36 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
                 tokens.erase(tokens.begin()+call_index);
             }
             tokens.erase(tokens.begin()+call_index);
-            instructions.push_back(Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens));
+            int argc = functions[call_name].GetArgumentCount();
+            while(int(_tokens.size())>argc)
+            {
+                const int S = _tokens.size();
+                _tokens = ParseEquals(_tokens); //if (int(_tokens.size())==S) { break; }
+                _tokens = ParseMath(_tokens); if (int(_tokens.size())==S) { break; }
+            }
+            if (functions[call_name].GetReturnType()!=ReturnType::RETURN_VOID)
+            {
+                tokens.insert(tokens.begin()+call_index, functions[call_name].Call(Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens)).at(0));
+            }
+            else
+            {
+                instructions.push_back(Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens));
+            }
         }
-        else { computing = false; break; }
+        else
+        {
+            computing = false; break;
+        }
+        //PrintTokens(tokens);
     }
-    //for (int i=0; i<int(instructions.size()); i++) { PrintTokens(instructions[i].GetArguments()); }
-    //std::cout <<"END\n"<<std::endl;
+    //std::cout <<"Residual:"<<std::endl; PrintTokens(tokens);
+    while(int(tokens.size())>1)
+    {
+        const int S = tokens.size();
+        tokens = ParseEquals(tokens);
+        tokens = ParseMath(tokens);
+        if (int(tokens.size())==S) { break; }
+    }
     return instructions;
 }
 //*/

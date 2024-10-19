@@ -20,7 +20,8 @@ private:
 
     bool user_engaged = true;
     int stack_limit = 4096;
-    Block stack = Block(0);
+    int current_scope = 0;
+    Block stack = Block(current_scope);
     std::vector<Token> output_buffer;
     
     
@@ -33,6 +34,18 @@ public:
     bool IsUserEngaged();
     void SetUserEngaged(bool value);
 
+    bool VariableExists(std::string name);
+    void DeleteVariable(std::string name);
+    Token GetVariable(std::string name);
+    void SetVariable(std::string name, Token value);
+    void ClearStack();
+    Block GetStack();
+    int GetStackLimit();
+    void SetStackLimit(int _stack_limit);
+
+    int GetScope();
+    void SetScope(int _scope);
+
     bool FunctionExists(std::string name);
     bool FunctionReturns(std::string name);
     bool HasFunction(std::vector<Token> tokens);
@@ -44,12 +57,6 @@ public:
     bool IsStringInteger(std::string text);
     bool IsStringDecimal(std::string text);
     void PrintTokens(std::vector<Token> tokens);
-
-    void DeleteVariable(std::string name);
-    void ClearStack();
-    Block GetStack();
-    int GetStackLimit();
-    void SetStackLimit(int _stack_limit);
 
     Token TokenizeSegment(std::string segment, int index);
     std::vector<Token> TokenizeLine(std::string line);
@@ -69,6 +76,8 @@ public:
     std::vector<Token> ParseEquals(std::vector<Token> tokens);
 
     std::vector<Token> ParseQuotes(std::vector<Token> tokens);
+
+    std::vector<Token> ParseBlocks(std::vector<Token> tokens);
 
     int FirstEqualsIndex(std::vector<Token> tokens);
     std::vector<Token> ParseVariables(std::vector<Token> tokens);

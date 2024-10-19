@@ -5,13 +5,6 @@
 
 Shell shell = Shell();
 
-std::vector<Token> ExecuteTest(Instruction instruction)
-{
-    std::string value = instruction.GetArgument(0).GetValue();
-    std::cout << value << std::endl;
-    return {};
-}
-
 std::vector<Token> ExecuteDelete(Instruction instruction)
 {
     std::string value = instruction.GetArgument(0).GetName();
@@ -63,10 +56,7 @@ std::vector<Token> ExecuteEcho(Instruction instruction)
         {
             Token token = args.at(i);
             std::string value = token.GetValue();
-            if      (token.GetType()==SyntaxType::TYPE_BOOLEAN)
-            {
-                std::cout << Boolean::alias[std::stoi(value)];
-            }
+            if      (token.GetType()==SyntaxType::TYPE_BOOLEAN) { std::cout << Boolean::alias[std::stoi(value)]; }
             else if (token.GetType()==SyntaxType::TYPE_STRING)
             {
                 const int VS = value.size();
@@ -98,6 +88,13 @@ std::vector<Token> ExecuteEcho(Instruction instruction)
     return {};
 }
 
+std::vector<Token> ExecuteEchi(Instruction instruction)
+{
+    ExecuteEcho(instruction);
+    std::string line = ""; std::getline(std::cin, line);
+    return {Token(instruction.GetArgument(0).GetIndex(), SyntaxType::TYPE_STRING, line, "")};
+}
+
 std::vector<Token> ExecuteEval(Instruction instruction)
 {
     std::string value = instruction.GetArgument(0).GetValue();
@@ -108,15 +105,84 @@ std::vector<Token> ExecuteEval(Instruction instruction)
 
 std::vector<Token> ExecuteExit(Instruction instruction)
 {
-    //std::string value = instruction.GetArgument(1).GetName();
-    //shell.ClearStack();
     shell.SetUserEngaged(false);
     return {};
 }
 
 std::vector<Token> ExecuteFor(Instruction instruction)
 {
-    std::string value = instruction.GetArgument(0).GetValue();
+    //shell.PrintTokens(instruction.GetArguments());
+    Token iter = instruction.GetArgument(0);
+    Token oper = instruction.GetArgument(1);
+    Token comp = instruction.GetArgument(2);
+    std::string var_name = iter.GetName();
+    bool loop = false;
+    Token replace;
+    if (shell.VariableExists(var_name))
+    {
+        replace = shell.GetVariable(var_name);
+        std::string value = replace.GetValue();
+        if      (replace.GetType()==SyntaxType::TYPE_INTEGER)
+        {
+            if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]       )
+            {
+                int v = std::stoi(value); value = std::to_string(v+1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v< std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v< std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]      )
+            {
+                int v = std::stoi(value); value = std::to_string(v-1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v> std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v> std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL] )
+            {
+                int v = std::stoi(value); value = std::to_string(v+1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v<=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v<=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL])
+            {
+                int v = std::stoi(value); value = std::to_string(v-1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v>=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v>=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+        }
+        else if (replace.GetType()==SyntaxType::TYPE_DECIMAL)
+        {
+            if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]       )
+            {
+                float v = std::stof(value); value = std::to_string(v+1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v< std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v< std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]      )
+            {
+                float v = std::stof(value); value = std::to_string(v-1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v> std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v> std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL] )
+            {
+                float v = std::stof(value); value = std::to_string(v+1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v<=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v<=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL])
+            {
+                float v = std::stof(value); value = std::to_string(v-1);
+                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v>=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v>=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+            }
+        }
+    }
+    if (loop)
+    {
+        // Figure Out Pushing Block To Stack
+        
+        
+    }
     return {};
 }
 
@@ -146,6 +212,8 @@ std::vector<Token> ExecuteSeedRandom(Instruction instruction)
 
 std::vector<Token> ExecuteRandom(Instruction instruction)
 {
+    //std::cout<<"----------------"<<std::endl;
+    //shell.PrintTokens(instruction.GetArguments());
     int value = rand();
     return {Token(instruction.GetArgument(0).GetIndex(), SyntaxType::TYPE_INTEGER, std::to_string(value))};
 }
@@ -208,9 +276,10 @@ void Run()
 
 int main(int argc, char *argv[])
 {
-    shell.RegisterFunction("test",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteTest));
+    //shell.RegisterFunction("test",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteTest));
     shell.RegisterFunction("delete",  Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteDelete));
     shell.RegisterFunction("echo",    Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteEcho));
+    shell.RegisterFunction("echi",    Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteEchi));
     shell.RegisterFunction("eval",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteEval));
     shell.RegisterFunction("exit",    Generic::Function( 0, ReturnType::RETURN_VOID, ExecuteExit));
     shell.RegisterFunction("for",     Generic::Function( 3, ReturnType::RETURN_VOID, ExecuteFor));

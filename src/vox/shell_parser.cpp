@@ -1,6 +1,29 @@
 #include <iostream>
 #include "shell.h"
 
+std::vector<Token> Shell::ParseBlocks(std::vector<Token> tokens)
+{
+    std::vector<Token> condensed;
+    for (int i=0; i<int(tokens.size()); i++)
+    {
+        Token token = tokens[i];
+        std::string value = token.GetValue();
+        if      (value==Syntax::keys[Syntax::SYNTAX_BLOCK_L])
+        {
+            current_scope++;
+        }
+        else if (value==Syntax::keys[Syntax::SYNTAX_BLOCK_R])
+        {
+            current_scope--;
+        }
+        else
+        {
+            condensed.push_back(tokens.at(i));
+        }
+    }
+    return condensed;
+}
+
 std::vector<Token> Shell::ParseQuotes(std::vector<Token> tokens)
 {
     std::vector<Token> condensed;
@@ -37,7 +60,7 @@ std::vector<Token> Shell::ParseVariables(std::vector<Token> tokens)
     for (int i=0; i<int(tokens.size()); i++)
     {
         Token token = tokens.at(i);
-        if (token.GetType()==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(token.GetValue()))
+        if (token.GetType()==SyntaxType::TYPE_UNKNOWN && VariableExists(token.GetValue()))
         {
             condensed.push_back(stack.GetVariable(token.GetValue()));
         }
@@ -65,30 +88,47 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     if (operation_index>1) { v_type = tokens.at(operation_index-2); }
     Token solved = Token(v_name.GetIndex(), v_value.GetType(), v_value.GetValue(), SyntaxGlobal::unsolved_problem);
     int value_type=v_value.GetType(), type_type=v_type.GetType();
+    int token_index = v_name.GetIndex();
     std::string type_value=v_type.GetValue();
     std::string val_name = v_value.GetValue(), var_name = v_name.GetValue();
     if (type_type==SyntaxType::TYPE_RETURN)
     {
-        if ((type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN) ||
-            (type_value==ReturnType::keys[ReturnType::RETURN_INTEGER] && value_type==SyntaxType::TYPE_INTEGER) ||
-            (type_value==ReturnType::keys[ReturnType::RETURN_DECIMAL] && value_type==SyntaxType::TYPE_DECIMAL) ||
-            (type_value==ReturnType::keys[ReturnType::RETURN_STRING] && value_type==SyntaxType::TYPE_STRING))
+        if (type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN)
         {
-            return Token(v_name.GetIndex(), value_type, v_value.GetValue(), v_name.GetValue());
+            std::string bool_value = v_value.GetValue();
+            if      (bool_value==Boolean::alias[0]) { bool_value = Boolean::keys[0]; }
+            else if (bool_value==Boolean::alias[1]) { bool_value = Boolean::keys[1]; }
+            return Token(token_index, value_type, bool_value, var_name);
+        }
+        else if (type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_INTEGER)
+        {
+            return Token(token_index, value_type, v_value.GetValue(), var_name);
+        }
+        else if (type_value==ReturnType::keys[ReturnType::RETURN_INTEGER] && value_type==SyntaxType::TYPE_INTEGER)
+        {
+            return Token(token_index, value_type, v_value.GetValue(), var_name);
+        }
+        else if (type_value==ReturnType::keys[ReturnType::RETURN_DECIMAL] && value_type==SyntaxType::TYPE_DECIMAL)
+        {
+            return Token(token_index, value_type, v_value.GetValue(), var_name);
+        }
+        else if (type_value==ReturnType::keys[ReturnType::RETURN_STRING] && value_type==SyntaxType::TYPE_STRING)
+        {
+            return Token(token_index, value_type, v_value.GetValue(), var_name);
         }
         else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
         {
             Token compare = stack.GetVariable(val_name);
-            return Token(v_name.GetIndex(), compare.GetType(), compare.GetValue(), var_name);
+            return Token(token_index, compare.GetType(), compare.GetValue(), var_name);
         }
+        // Handle Function Returns
         else if (value_type==SyntaxType::TYPE_BUILT_IN && HasFunction(tokens))
         {
             Instruction instruction = GenerateInstructions(tokens).at(0);
             std::vector<Token> fr = functions[v_value.GetValue()].Call(instruction);
-            //PrintTokens(fr);
             if (fr.size()>0)
             {
-                return Token(v_name.GetIndex(), fr.at(0).GetType(), fr.at(0).GetValue(), v_name.GetValue());
+                return Token(token_index, fr.at(0).GetType(), fr.at(0).GetValue(), var_name);
             }
         }
     }
@@ -99,22 +139,73 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             Token compare = stack.GetVariable(var_name);
             if (compare.GetType()==v_value.GetType())
             {
-                return Token(v_name.GetIndex(), value_type, v_value.GetValue(), v_name.GetValue());
+                return Token(token_index, value_type, v_value.GetValue(), var_name);
             }
-            else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
+            
+            else if (compare.GetType()==SyntaxType::TYPE_BOOLEAN && v_value.GetType()==SyntaxType::TYPE_BOOLEAN)
             {
-                Token compare = stack.GetVariable(val_name);
-                return Token(v_name.GetIndex(), compare.GetType(), compare.GetValue(), var_name);
+                std::string bool_value = v_value.GetValue();
+                if      (bool_value==Boolean::alias[0]) { bool_value = Boolean::keys[0]; }
+                else if (bool_value==Boolean::alias[1]) { bool_value = Boolean::keys[1]; }
+                return Token(token_index, compare.GetType(), bool_value, compare.GetName());
             }
+            else if (compare.GetType()==SyntaxType::TYPE_BOOLEAN && v_value.GetType()==SyntaxType::TYPE_INTEGER)
+            {
+                std::string bool_value = v_value.GetValue();
+                return Token(token_index, compare.GetType(), bool_value, var_name);
+            }
+            // Handle Function Returns
             else if (value_type==SyntaxType::TYPE_BUILT_IN && HasFunction(tokens))
             {
                 Instruction instruction = GenerateInstructions(tokens).at(0);
                 std::vector<Token> fr = functions[v_value.GetValue()].Call(instruction);
-                //PrintTokens(fr);
                 if (fr.size()>0)
                 {
-                    return Token(v_name.GetIndex(), fr.at(0).GetType(), fr.at(0).GetValue(), v_name.GetValue());
+                    return Token(token_index, fr.at(0).GetType(), fr.at(0).GetValue(), var_name);
                 }
+            }
+        }
+        else
+        {
+            if (value_type==SyntaxType::TYPE_BOOLEAN || value_type==SyntaxType::TYPE_INTEGER)
+            {
+                std::string bool_value = v_value.GetValue();
+                if      (bool_value==Boolean::alias[0]) { bool_value = Boolean::keys[0]; }
+                else if (bool_value==Boolean::alias[1]) { bool_value = Boolean::keys[1]; }
+                return Token(token_index, v_name.GetType(), bool_value, v_name.GetName());
+            }
+            else if (value_type==SyntaxType::TYPE_INTEGER)
+            {
+                return Token(token_index, value_type, v_value.GetValue(), var_name);
+            }
+            else if (value_type==SyntaxType::TYPE_DECIMAL)
+            {
+                return Token(token_index, value_type, v_value.GetValue(), var_name);
+            }
+            else if (value_type==SyntaxType::TYPE_STRING)
+            {
+                return Token(token_index, value_type, v_value.GetValue(), var_name);
+            }
+            
+            else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
+            {
+                Token compare = stack.GetVariable(val_name);
+                return Token(token_index, compare.GetType(), compare.GetValue(), val_name);
+            }
+            // Handle Function Returns
+            else if (HasFunction(tokens))
+            {
+                Instruction instruction = GenerateInstructions(tokens).at(0);
+                std::vector<Token> fr = functions[v_value.GetValue()].Call(instruction);
+                if (fr.size()>0)
+                {
+                    return Token(token_index, fr.at(0).GetType(), fr.at(0).GetValue(), var_name);
+                }
+            }
+            else
+            {
+                //std::cout<<"1---------------"<<std::endl;
+                //PrintTokens(tokens);
             }
         }
     }
@@ -163,7 +254,16 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
     }
     for (int i=0; i<int(condensed.size()); i++)
     {
-        if (condensed.at(i).GetName()!="") { stack.PushVariable(condensed.at(i)); }
+        std::string name = condensed.at(i).GetName();
+        if (name!="" && name!=SyntaxGlobal::unsolved_problem) { stack.PushVariable(condensed.at(i)); }
+        /*else if (name==SyntaxGlobal::unsolved_problem)
+        {
+            std::cout<<"- ERROR START -"<<std::endl;
+            PrintTokens(condensed);
+            std::cout<<"- ERROR END -"<<std::endl;
+            //stack.PushVariable(condensed.at(i));
+        }
+        */
     }
     //PrintTokens(condensed);
     return condensed;

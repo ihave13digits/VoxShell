@@ -1,3 +1,4 @@
+#include <iostream>
 #include "block.h"
 #include "syntax.h"
 
@@ -44,6 +45,7 @@ void Block::PushVariable(Token token)
 {
     if (!VariableNameExists(token.GetName())) { variables.emplace(token.GetName(), token); }
     else { SetVariable(token.GetName(), token); }
+    //for (auto& it : variables) { std::cout << it.second.GetName() << ":" << it.second.GetValue() <<"; "; } std::cout<<std::endl;
 }
 
 void Block::DeleteVariable(std::string name)

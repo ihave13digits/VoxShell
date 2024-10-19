@@ -41,6 +41,8 @@ std::vector<std::string> Syntax::keys =
     "\"",
     "'",
     ",",
+    "{",
+    "}",
     ";",
 };
 
