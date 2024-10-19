@@ -1,7 +1,0 @@
-echo();
-
-echo("Hello, world!");
-
-echo("Chain " "of " "args!" "\n");
-
-echo("Secret " "echo");

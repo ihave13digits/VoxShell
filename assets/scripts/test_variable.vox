@@ -1,9 +1,24 @@
-int i = 128;
-float pi = 3.14159;
-string hello = "Hello, world!  ";
+bool b = true;
+echo("Boolean Variable b" " = ");
+echo(b);
 
-echo(hello "My favorite number is " i " and my favorite decimal is " pi "\n");
+b = false;
 
-delete(i);
-delete(pi);
-delete(hello);
+echo("Boolean Variable b" " changed to ");
+echo(b);
+
+delete(b);
+
+
+
+int r = rand() % 100;
+
+echo("Integer Variable r" " = ");
+echo(r);
+
+r = rand() % r;
+
+echo("Integer Variable r" " changed to ");
+echo(r);
+
+delete(r);
