@@ -378,7 +378,8 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
             }
             if (functions[call_name].GetReturnType()!=ReturnType::RETURN_VOID)
             {
-                tokens.insert(tokens.begin()+call_index, functions[call_name].Call(Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens)).at(0));
+                Instruction instruction = Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens);
+                tokens.insert(tokens.begin()+call_index, functions[call_name].Call(instruction).at(0));
             }
             else
             {

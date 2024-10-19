@@ -3,22 +3,18 @@ echo("Boolean Variable b" " = ");
 echo(b);
 
 b = false;
-
 echo("Boolean Variable b" " changed to ");
 echo(b);
-
-delete(b);
 
 
 
 int r = rand() % 100;
-
 echo("Integer Variable r" " = ");
 echo(r);
 
 r = rand() % r;
-
 echo("Integer Variable r" " changed to ");
 echo(r);
 
+delete(b);
 delete(r);
