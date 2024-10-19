@@ -1,3 +1,4 @@
 include("test_echo.vox");
+include("test_math.vox");
 include("test_variable.vox");
 include("test_exit.vox");
