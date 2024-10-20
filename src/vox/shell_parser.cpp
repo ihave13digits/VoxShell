@@ -76,14 +76,13 @@ int Shell::FirstEqualsIndex(std::vector<Token> tokens)
     int operation_index=-1;
     for (int i=0; i<int(tokens.size()); i++)
     {
-        if (tokens[i].GetValue()==Operator::keys[Operator::OPERATOR_SET]) return i;
+        if (tokens[i].GetValue()==Operator::keys[Operator::OPERATOR_SET] && tokens[i].GetType()!=SyntaxType::TYPE_STRING) return i;
     }
     return operation_index;
 }
 
 Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
 {
-    //PrintTokens(tokens);
     Token v_name=tokens.at(operation_index-1), v_value=tokens.at(operation_index+1), v_type;
     if (operation_index>1) { v_type = tokens.at(operation_index-2); }
     Token solved = Token(v_name.GetIndex(), v_value.GetType(), v_value.GetValue(), SyntaxGlobal::unsolved_problem);
@@ -93,7 +92,6 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     std::string val_name = v_value.GetValue(), var_name = v_name.GetValue();
     if (type_type==SyntaxType::TYPE_RETURN)
     {
-        //std::cout<<"Step1"<<std::endl;
         /*
         if ((type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN) ||
             (type_value==ReturnType::keys[ReturnType::RETURN_INTEGER] && value_type==SyntaxType::TYPE_INTEGER) ||
@@ -103,7 +101,9 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             return Token(token_index, value_type, v_value.GetValue(), var_name);
         }
         
-        else */if (type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN)
+        else */
+        // Handle Boolean
+        if (type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN)
         {
             std::string bool_value = v_value.GetValue();
             if      (bool_value==Boolean::alias[0]) { bool_value = Boolean::keys[0]; }
@@ -114,6 +114,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
         {
             return Token(token_index, value_type, v_value.GetValue(), var_name);
         }
+        // Handle Integer
         else if (type_value==ReturnType::keys[ReturnType::RETURN_INTEGER] && value_type==SyntaxType::TYPE_INTEGER)
         {
             return Token(token_index, value_type, v_value.GetValue(), var_name);
@@ -122,6 +123,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
         {
             return Token(token_index, value_type, std::to_string(int(std::stof(v_value.GetValue()))), var_name);
         }
+        // Handle Decimal
         else if (type_value==ReturnType::keys[ReturnType::RETURN_DECIMAL] && value_type==SyntaxType::TYPE_DECIMAL)
         {
             return Token(token_index, value_type, v_value.GetValue(), var_name);
@@ -130,10 +132,12 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
         {
             return Token(token_index, value_type, std::to_string(float(std::stoi(v_value.GetValue()))), var_name);
         }
+        // Handle String
         else if (type_value==ReturnType::keys[ReturnType::RETURN_STRING] && value_type==SyntaxType::TYPE_STRING)
         {
             return Token(token_index, value_type, v_value.GetValue(), var_name);
         }
+        // Handle Variable (This may need checks)
         else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
         {
             Token compare = stack.GetVariable(val_name);
@@ -154,8 +158,8 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     {
         if (stack.VariableNameExists(var_name))
         {
-            //std::cout<<"Step2"<<std::endl;
             Token compare = stack.GetVariable(var_name);
+            // Handle.. Wait What?  They Match?!
             if (compare.GetType()==v_value.GetType())
             {
                 return Token(token_index, value_type, v_value.GetValue(), var_name);
@@ -170,7 +174,14 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             }
             else if (compare.GetType()==SyntaxType::TYPE_BOOLEAN && v_value.GetType()==SyntaxType::TYPE_INTEGER)
             {
-                return Token(token_index, compare.GetType(), v_value.GetValue(), var_name);
+                std::string bool_value = v_value.GetValue();
+                int numeric_value = 0;
+                if      (bool_value==Boolean::alias[0]) { numeric_value = 0; }
+                else if (bool_value==Boolean::alias[1]) { numeric_value = 1; }
+                else if (IsStringInteger(bool_value)) { numeric_value = std::stoi(bool_value); }
+                if (numeric_value>1) { numeric_value=1; } else if (numeric_value<0) { numeric_value=0; }
+                bool_value=Boolean::keys[numeric_value];
+                return Token(token_index, compare.GetType(), bool_value, var_name);
             }
             // Handle Integer
             else if (compare.GetType()==SyntaxType::TYPE_INTEGER && v_value.GetType()==SyntaxType::TYPE_DECIMAL)
@@ -205,27 +216,31 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
         }
         else
         {
-            //std::cout<<"Step3"<<std::endl;
-            //PrintTokens(tokens);
-            if (value_type==SyntaxType::TYPE_BOOLEAN || value_type==SyntaxType::TYPE_INTEGER)
+            //TODO: These Are ALL SUS!!!
+            // Handle Boolean
+            if (value_type==SyntaxType::TYPE_BOOLEAN)
             {
                 std::string bool_value = v_value.GetValue();
                 if      (bool_value==Boolean::alias[0]) { bool_value = Boolean::keys[0]; }
                 else if (bool_value==Boolean::alias[1]) { bool_value = Boolean::keys[1]; }
                 return Token(token_index, v_name.GetType(), bool_value, v_name.GetName());
             }
+            // Handle Integer
             else if (value_type==SyntaxType::TYPE_INTEGER)
             {
                 return Token(token_index, value_type, v_value.GetValue(), v_name.GetName());
             }
+            // Handle Decimal
             else if (value_type==SyntaxType::TYPE_DECIMAL)
             {
                 return Token(token_index, value_type, v_value.GetValue(), v_name.GetName());
             }
+            // Handle String
             else if (value_type==SyntaxType::TYPE_STRING)
             {
                 return Token(token_index, value_type, v_value.GetValue(), v_name.GetName());
             }
+            // Handle Variable
             else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
             {
                 Token compare = stack.GetVariable(val_name);

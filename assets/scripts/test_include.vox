@@ -1,4 +1,7 @@
 include("test_echo.vox");
+include("test_eval.vox");
 include("test_math.vox");
+include("test_bitwise.vox");
+include("test_logic.vox");
 include("test_variable.vox");
 include("test_exit.vox");

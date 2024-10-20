@@ -9,7 +9,5 @@ for(i < depth);
 
 echo("Fibonacci Sequence (" depth ") = " result "\n");
 
-delete(depth);
-delete(result);
-delete(i);
+delete(depth result i);
 exit();

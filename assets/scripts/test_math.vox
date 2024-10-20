@@ -28,5 +28,4 @@ echo("3.0*3.0=" f "\n");
 f = 3.0 ^ 3.0;
 echo("3.0^3.0=" f "\n");
 
-delete(i);
-delete(f);
+delete(i f);

@@ -9,12 +9,10 @@ echo(b);
 
 
 int r = rand() % 100;
-echo("Integer Variable r" " = ");
-echo(r);
+echo("Integer Variable r" " = " r "\n");
 
 r = rand() % r;
-echo("Integer Variable r" " changed to ");
-echo(r);
+echo("Integer Variable r" " changed to " r "\n");
 
 delete(b);
 delete(r);

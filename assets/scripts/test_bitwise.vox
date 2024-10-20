@@ -1,0 +1,9 @@
+int bit_op = 0;
+
+bit_op = 123 | 456;
+echo("123 | 456" " = " bit_op "\n");
+
+bit_op = 123 & 456;
+echo("123 & 456" " = " bit_op "\n");
+
+delete(bit_op);

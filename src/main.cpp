@@ -7,8 +7,12 @@ Shell shell = Shell();
 
 std::vector<Token> ExecuteDelete(Instruction instruction)
 {
-    std::string value = instruction.GetArgument(0).GetName();
-    shell.DeleteVariable(value);
+    const int S = instruction.GetArguments().size();
+    for (int i=0; i<S; i++)
+    {
+        std::string value = instruction.GetArgument(i).GetName();
+        shell.DeleteVariable(value);
+    }
     return {};
 }
 
@@ -23,7 +27,12 @@ std::vector<Token> ExecuteEcho(Instruction instruction)
     else if (S==1)
     {
         Token token = args.at(0);
-        if      (token.GetType()==SyntaxType::TYPE_BOOLEAN) { std::cout << Boolean::alias[std::stoi(token.GetValue())]; }
+        std::string value = token.GetValue();
+        if      (token.GetType()==SyntaxType::TYPE_BOOLEAN)
+        {
+            if (shell.IsStringInteger(value) && value.size()==1) { std::cout << Boolean::alias[std::stoi(value)]; }
+            else { std::cout << value; }
+        }
         else if (token.GetType()==SyntaxType::TYPE_STRING)
         {
             std::string last_char = "";
@@ -56,7 +65,11 @@ std::vector<Token> ExecuteEcho(Instruction instruction)
         {
             Token token = args.at(i);
             std::string value = token.GetValue();
-            if      (token.GetType()==SyntaxType::TYPE_BOOLEAN) { std::cout << Boolean::alias[std::stoi(value)]; }
+            if      (token.GetType()==SyntaxType::TYPE_BOOLEAN)
+            {
+                if (shell.IsStringInteger(value) && value.size()==1) { std::cout << Boolean::alias[std::stoi(value)]; }
+                else { std::cout << value; }
+            }
             else if (token.GetType()==SyntaxType::TYPE_STRING)
             {
                 const int VS = value.size();
@@ -97,6 +110,7 @@ std::vector<Token> ExecuteEchi(Instruction instruction)
 
 std::vector<Token> ExecuteEval(Instruction instruction)
 {
+    //shell.PrintTokens(instruction.GetArguments());
     std::string value = instruction.GetArgument(0).GetValue();
     if (value==SyntaxGlobal::blank_instruction) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_UNINTELLIGIBLE_INPUT] << std::endl; return {Token()}; }
     shell.ParseLine(value);
@@ -212,10 +226,7 @@ std::vector<Token> ExecuteSeedRandom(Instruction instruction)
 
 std::vector<Token> ExecuteRandom(Instruction instruction)
 {
-    //std::cout<<"----------------"<<std::endl;
-    //shell.PrintTokens(instruction.GetArguments());
-    int value = rand();
-    return {Token(instruction.GetArgument(0).GetIndex(), SyntaxType::TYPE_INTEGER, std::to_string(value))};
+    return {Token(instruction.GetArgument(0).GetIndex(), SyntaxType::TYPE_INTEGER, std::to_string(rand()))};
 }
 
 std::vector<Token> ExecuteCos(Instruction instruction)
@@ -276,8 +287,8 @@ void Run()
 
 int main(int argc, char *argv[])
 {
-    //shell.RegisterFunction("test",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteTest));
-    shell.RegisterFunction("delete",  Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteDelete));
+    // TODO: Move These To "Standard Library"
+    shell.RegisterFunction("delete",  Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteDelete));
     shell.RegisterFunction("echo",    Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteEcho));
     shell.RegisterFunction("echi",    Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteEchi));
     shell.RegisterFunction("eval",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteEval));
@@ -285,6 +296,7 @@ int main(int argc, char *argv[])
     shell.RegisterFunction("for",     Generic::Function( 3, ReturnType::RETURN_VOID, ExecuteFor));
     shell.RegisterFunction("if",      Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteIf));
     shell.RegisterFunction("include", Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteInclude));
+    // TODO: Move These To "Math Library"
     shell.RegisterFunction("seed",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteSeedRandom));
     shell.RegisterFunction("rand",    Generic::Function( 0, ReturnType::RETURN_INTEGER, ExecuteRandom));
     shell.RegisterFunction("cos",     Generic::Function( 1, ReturnType::RETURN_DECIMAL, ExecuteCos));

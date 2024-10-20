@@ -419,31 +419,31 @@ Token Shell::SolveMath(Token a, Token b, Token o)
         std::string va = a.GetValue();
         if      (b.GetType()==SyntaxType::TYPE_BOOLEAN)
         {
-            int vb = std::stoi(b.GetValue());
-            token.SetType(SyntaxType::TYPE_BOOLEAN);
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+std::to_string(vb)); }
+            std::string vb = b.GetValue();
+            token.SetType(SyntaxType::TYPE_STRING);
+            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+vb); }
             else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
             {
-                token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_DECIMAL);
+                token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN);
                 token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN]);
             }
         }
         else if (b.GetType()==SyntaxType::TYPE_INTEGER)
         {
-            int vb = std::stoi(b.GetValue());
+            std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+std::to_string(vb)); }
+            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+vb); }
             else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
             {
-                token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_DECIMAL);
+                token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_INTEGER);
                 token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_INTEGER]);
             }
         }
         else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
         {
-            float vb = std::stof(b.GetValue());
+            std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+std::to_string(vb)); }
+            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+vb); }
             else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
             {
                 token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_DECIMAL);

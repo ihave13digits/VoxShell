@@ -1,18 +1,4 @@
-string user = echi("Hi, what's your name?");
-string response = "That's a great name, " + user + "!  What's your favorite hobby?";
-string hobby = echi(response);
-string hello = "" + hobby + " is super cool, " + user + "!";
-string phrase = "I really like to evaluate\nstrings of characters and perform different tasks based on their syntax!";
+echo("1"+"2"+"3"+"4");
 
-echo(hello "  " phrase "\n");
-echo();
-
-echo("Deleting Variables...");
-
-delete(user);
-delete(response);
-delete(hobby);
-delete(hello);
-delete(phrase);
-
-echo("Variables Deleted");
+echo("Same " "Line ");
+echo("As This!");

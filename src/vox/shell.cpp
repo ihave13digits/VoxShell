@@ -297,39 +297,6 @@ void Shell::ParseScript(Script script)
     }
 }
 
-/*
-std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
-{
-    std::vector<Instruction> instructions;
-    std::string state = "";
-    for (int i=0; i<int(tokens.size()); i++)
-    {
-        bool check_builtins = true;
-        std::string value = tokens[i].GetValue();
-        if (tokens[i].GetName()!="") { stack.PushVariable(tokens[i]); check_builtins=false; }
-        if (check_builtins)
-        {
-            if (FunctionExists(value)) { state = value; }
-        }
-        if (value==Syntax::keys[Syntax::SYNTAX_END])
-        {
-            std::vector<Token> _tokens;
-            for (int d=0; d<i; d++)
-            {
-                if (tokens.at(0).GetValue()!=Syntax::keys[Syntax::SYNTAX_END]) { _tokens.push_back(tokens.at(0)); }
-                tokens.erase(tokens.begin());
-            }
-            if (HasFunction(_tokens))
-            {
-                instructions.push_back(Instruction(functions[state].GetReturnType(), functions[state].GetArgumentCount(), state, _tokens));
-            }
-            //PrintTokens(_tokens);
-        }
-    }
-    return instructions;
-}
-*/
-///*
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
     tokens = ParseQuotes(tokens);
@@ -402,7 +369,6 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
     }
     return instructions;
 }
-//*/
 
 void Shell::Evaluate(std::string line)
 {
