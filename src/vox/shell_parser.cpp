@@ -71,7 +71,7 @@ std::vector<Token> Shell::ParseVariables(std::vector<Token> tokens)
 
 
 
-int Shell::FirstEqualsIndex(std::vector<Token> tokens)
+inline int Shell::FirstEqualsIndex(std::vector<Token> tokens)
 {
     int operation_index=-1;
     for (int i=0; i<int(tokens.size()); i++)
@@ -321,7 +321,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
     for (int i=0; i<int(condensed.size()); i++)
     {
         std::string name = condensed.at(i).GetName();
-        if (name!="" && name!=SyntaxGlobal::unsolved_problem) { stack.PushVariable(condensed.at(i)); }
+        if (name!="" && name!=SyntaxGlobal::unsolved_problem) { PushVariable(condensed.at(i)); }
         /*else if (name==SyntaxGlobal::unsolved_problem)
         {
             std::cout<<"- ERROR START -"<<std::endl;

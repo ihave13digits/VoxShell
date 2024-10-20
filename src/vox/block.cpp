@@ -2,9 +2,10 @@
 #include "block.h"
 #include "syntax.h"
 
-Block::Block(int _scope, std::vector<Instruction> _stack)
+Block::Block(int _scope, int _block_index, std::vector<Instruction> _stack)
 {
     SetScope(_scope);
+    SetBlockIndex(_block_index);
     stack=_stack;
 }
 
@@ -22,6 +23,16 @@ int Block::GetScope()
 void Block::SetScope(int _scope)
 {
     scope = _scope;
+}
+
+int Block::GetBlockIndex()
+{
+    return block_index;
+}
+
+void Block::SetBlockIndex(int _block_index)
+{
+    block_index = _block_index;
 }
 
 void Block::PopFront()
@@ -93,6 +104,11 @@ std::vector<Block> Block::GetBlocks()
 void Block::SetBlocks(std::vector<Block> _blocks)
 {
     blocks = _blocks;
+}
+
+void Block::PushBlock(Block _block)
+{
+    blocks.push_back(_block);
 }
 
 

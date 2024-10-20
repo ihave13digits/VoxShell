@@ -2,7 +2,7 @@
 #include <cmath>
 #include "shell.h"
 
-bool Shell::HasOperation(std::vector<Token> tokens)
+inline bool Shell::HasOperation(std::vector<Token> tokens)
 {
     for (int i=0; i<int(tokens.size()); i++)
     {
@@ -18,7 +18,7 @@ bool Shell::HasOperation(std::vector<Token> tokens)
     return HasLogic(tokens);
 }
 
-bool Shell::HasLogic(std::vector<Token> tokens)
+inline bool Shell::HasLogic(std::vector<Token> tokens)
 {
     for (int i=0; i<int(tokens.size()); i++)
     {
@@ -40,7 +40,7 @@ bool Shell::HasLogic(std::vector<Token> tokens)
     return false;
 }
 
-int Shell::FirstOperationIndex(std::vector<Token> tokens, int state)
+inline int Shell::FirstOperationIndex(std::vector<Token> tokens, int state)
 {
     if (state==MathState::MATH_LOG) { return FirstLogicIndex(tokens); }
     int operation_index=-1;
@@ -82,7 +82,7 @@ int Shell::FirstOperationIndex(std::vector<Token> tokens, int state)
     return operation_index;
 }
 
-int Shell::FirstLogicIndex(std::vector<Token> tokens)
+inline int Shell::FirstLogicIndex(std::vector<Token> tokens)
 {
     int operation_index=-1;
     for (int i=0; i<int(tokens.size()); i++)
@@ -105,7 +105,7 @@ int Shell::FirstLogicIndex(std::vector<Token> tokens)
     return operation_index;
 }
 
-int Shell::FirstParenthesesIndex(std::vector<Token> tokens)
+inline int Shell::FirstParenthesesIndex(std::vector<Token> tokens)
 {
     int operation_index=-1, left_index=-1;
     for (int i=0; i<int(tokens.size()); i++)
@@ -128,7 +128,7 @@ int Shell::FirstParenthesesIndex(std::vector<Token> tokens)
     return operation_index;
 }
 
-bool Shell::CanComputeToken(Token token)
+inline bool Shell::CanComputeToken(Token token)
 {
     //const int T = token.GetType();
     //if (T==SyntaxType::TYPE_BUILT_IN && FunctionExists(token.GetValue()) && FunctionReturns(token.GetValue())) { return true; }

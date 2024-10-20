@@ -8,7 +8,7 @@ Shell::Shell()
 
 
 
-bool Shell::IsUserEngaged()
+inline bool Shell::IsUserEngaged()
 {
     return user_engaged;
 }
@@ -40,9 +40,14 @@ void Shell::SetVariable(std::string name, Token value)
     stack.SetVariable(name, value);
 }
 
+void Shell::PushVariable(Token value)
+{
+    stack.PushVariable(value);
+}
+
 void Shell::ClearStack()
 {
-    stack = Block(0);
+    stack = Block(0, 0);
 }
 
 Block Shell::GetStack()
@@ -244,13 +249,13 @@ void Shell::PrintState()
 
 
 
-Token Shell::TokenizeSegment(std::string segment, int index)
+inline Token Shell::TokenizeSegment(std::string segment, int index)
 {
     int type = GetTokenType(segment);
     return Token(index, type, segment);
 }
 
-std::vector<Token> Shell::TokenizeLine(std::string line)
+inline std::vector<Token> Shell::TokenizeLine(std::string line)
 {
     std::vector<Token> tokens;
     std::string segment = "";
@@ -309,7 +314,7 @@ void Shell::ParseScript(Script script)
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
     //std::cout <<"FirstPass:"<<std::endl;
-    PrintState();
+    //PrintState();
     //PrintTokens(tokens);
     tokens = ParseBlocks(tokens);
     tokens = ParseQuotes(tokens);

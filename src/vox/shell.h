@@ -21,9 +21,8 @@ private:
     bool user_engaged = true;
     int stack_limit = 4096;
     int current_scope = 0;
-    Block stack = Block(current_scope);
+    Block stack = Block(current_scope, 0);
     std::vector<Token> output_buffer;
-    
     
     std::map<std::string, Generic::Function> functions;
 
@@ -38,6 +37,7 @@ public:
     void DeleteVariable(std::string name);
     Token GetVariable(std::string name);
     void SetVariable(std::string name, Token value);
+    void PushVariable(Token value);
     void ClearStack();
     Block GetStack();
     int GetStackLimit();
