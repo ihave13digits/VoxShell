@@ -5,6 +5,10 @@
 
 Shell shell = Shell();
 
+//
+// Standard Library
+//
+
 std::vector<Token> ExecuteDelete(Instruction instruction)
 {
     const int S = instruction.GetArguments().size();
@@ -216,6 +220,17 @@ std::vector<Token> ExecuteInclude(Instruction instruction)
     return {};
 }
 
+std::vector<Token> ExecuteToString(Instruction instruction)
+{
+    return {Token(instruction.GetArgument(0).GetIndex(), SyntaxType::TYPE_STRING, instruction.GetArgument(0).GetValue(), instruction.GetArgument(0).GetName())};
+}
+
+
+
+//
+// Math Library
+//
+
 std::vector<Token> ExecuteSeedRandom(Instruction instruction)
 {
     Token arg = instruction.GetArgument(0);
@@ -288,20 +303,21 @@ void Run()
 int main(int argc, char *argv[])
 {
     // TODO: Move These To "Standard Library"
-    shell.RegisterFunction("delete",  Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteDelete));
-    shell.RegisterFunction("echo",    Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteEcho));
-    shell.RegisterFunction("echi",    Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteEchi));
-    shell.RegisterFunction("eval",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteEval));
-    shell.RegisterFunction("exit",    Generic::Function( 0, ReturnType::RETURN_VOID, ExecuteExit));
-    shell.RegisterFunction("for",     Generic::Function( 3, ReturnType::RETURN_VOID, ExecuteFor));
-    shell.RegisterFunction("if",      Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteIf));
-    shell.RegisterFunction("include", Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteInclude));
+    shell.RegisterFunction("delete",    Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteDelete));
+    shell.RegisterFunction("echo",      Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteEcho));
+    shell.RegisterFunction("echi",      Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteEchi));
+    shell.RegisterFunction("eval",      Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteEval));
+    shell.RegisterFunction("exit",      Generic::Function( 0, ReturnType::RETURN_VOID, ExecuteExit));
+    shell.RegisterFunction("for",       Generic::Function( 3, ReturnType::RETURN_VOID, ExecuteFor));
+    shell.RegisterFunction("if",        Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteIf));
+    shell.RegisterFunction("include",   Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteInclude));
+    shell.RegisterFunction("to_string", Generic::Function( 1, ReturnType::RETURN_STRING, ExecuteToString));
     // TODO: Move These To "Math Library"
-    shell.RegisterFunction("seed",    Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteSeedRandom));
-    shell.RegisterFunction("rand",    Generic::Function( 0, ReturnType::RETURN_INTEGER, ExecuteRandom));
-    shell.RegisterFunction("cos",     Generic::Function( 1, ReturnType::RETURN_DECIMAL, ExecuteCos));
-    shell.RegisterFunction("sin",     Generic::Function( 1, ReturnType::RETURN_DECIMAL, ExecuteSin));
-    shell.RegisterFunction("tan",     Generic::Function( 1, ReturnType::RETURN_DECIMAL, ExecuteTan));
+    shell.RegisterFunction("seed",      Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteSeedRandom));
+    shell.RegisterFunction("rand",      Generic::Function( 0, ReturnType::RETURN_INTEGER, ExecuteRandom));
+    shell.RegisterFunction("cos",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, ExecuteCos));
+    shell.RegisterFunction("sin",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, ExecuteSin));
+    shell.RegisterFunction("tan",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, ExecuteTan));
     if (argc>1)
     {
         Eval(argc, argv);

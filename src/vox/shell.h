@@ -57,6 +57,7 @@ public:
     bool IsStringInteger(std::string text);
     bool IsStringDecimal(std::string text);
     void PrintTokens(std::vector<Token> tokens);
+    void PrintState();
 
     Token TokenizeSegment(std::string segment, int index);
     std::vector<Token> TokenizeLine(std::string line);

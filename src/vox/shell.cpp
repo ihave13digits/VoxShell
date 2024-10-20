@@ -233,6 +233,15 @@ void Shell::PrintTokens(std::vector<Token> tokens)
     //std::cout << "----------------------------------------------------------------" << std::endl;
 }
 
+void Shell::PrintState()
+{
+    std::cout << "Scope:" << current_scope;
+    std::cout << " Stack:" << stack.GetSize();
+    std::cout << " Blocks:" << stack.GetBlocks().size();
+    std::cout << " Variables:"<< stack.GetVariables().size();
+    std::cout << std::endl;
+}
+
 
 
 Token Shell::TokenizeSegment(std::string segment, int index)
@@ -299,12 +308,16 @@ void Shell::ParseScript(Script script)
 
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
+    //std::cout <<"FirstPass:"<<std::endl;
+    PrintState();
+    //PrintTokens(tokens);
+    tokens = ParseBlocks(tokens);
     tokens = ParseQuotes(tokens);
     tokens = ParseVariables(tokens);
     std::vector<Instruction> instructions;
     std::string state = "";
     bool computing = true;
-    //std::cout <<"FirstPass:"<<std::endl;
+    //std::cout <<"SecondPass:"<<std::endl;
     while (computing)
     {
         //PrintTokens(tokens);
@@ -386,6 +399,6 @@ void Shell::Evaluate(std::string line)
         callback_count++;
     }
     std::cout << "----------------------------------------------------------------" << std::endl;
-    std::cout << "Scope:" << stack.GetSize() << " Blocks:" << stack.GetBlocks().size() << " Variables:" << stack.GetVariables().size() << std::endl;
+    PrintState();
     std::cout << "----------------------------------------------------------------" << std::endl;
 }
