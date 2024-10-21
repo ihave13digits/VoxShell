@@ -129,7 +129,8 @@ std::vector<Token> ExecuteExit(Instruction instruction)
 
 std::vector<Token> ExecuteFor(Instruction instruction)
 {
-    shell.PrintTokens(instruction.GetArguments());
+    std::cout<<"For Called"<<std::endl;
+    //shell.PrintTokens(instruction.GetArguments());
     Token iter = instruction.GetArgument(0);
     Token oper = instruction.GetArgument(1);
     Token comp = instruction.GetArgument(2);

@@ -16,6 +16,11 @@ bool Block::ShouldTraverse(int _scope)
     return (_scope>scope && GetBlockSize(scope)>block_index);
 }
 
+bool Block::HasWorkLeft(int _scope)
+{
+    return (state==BlockState::BLOCK_COMPLETE);//(GetBlockSize(scope)<=block_index);
+}
+
 
 
 bool Block::GetRepeatBlock(int _scope)
@@ -86,7 +91,7 @@ void Block::SetInstructionIndex(int _instruction_index)
 {
     instruction_index = _instruction_index;
 }
-
+/*
 void Block::PopFront(int _scope)
 {
     if (_scope==scope)
@@ -103,6 +108,42 @@ void Block::PopFront(int _scope)
             else { block_index++; }
         }
         if (block_index>=GetBlockSize(scope) && instruction_index>=GetSize(scope)) { state=BlockState::BLOCK_COMPLETE; }
+    }
+    else if (ShouldTraverse(_scope))
+    {
+        blocks.at(block_index).PopFront(_scope);
+    }
+}
+*/
+void Block::PopFront(int _scope)
+{
+    if (_scope==scope && state==BlockState::BLOCK_COMPUTING)
+    {
+        instruction_index++;
+        if (instruction_index>=GetSize(scope))
+        {
+            if (repeat_block && blocks.at(block_index).GetState()==BlockState::BLOCK_COMPLETE)
+            {
+                blocks.at(block_index).SetBlockIndex(0);
+                blocks.at(block_index).SetInstructionIndex(0);
+                blocks.at(block_index).SetState(BlockState::BLOCK_WAITING);
+            }
+            else { block_index++; }
+        }
+        /*
+        instruction_index++;
+        if (instruction_index>=GetSize(scope))
+        {
+            if (repeat_block && blocks.at(block_index).GetState()==BlockState::BLOCK_COMPLETE)
+            {
+                blocks.at(block_index).SetBlockIndex(0);
+                blocks.at(block_index).SetInstructionIndex(0);
+                blocks.at(block_index).SetState(BlockState::BLOCK_WAITING);
+            }
+            else { block_index++; }
+        }
+        if (block_index>=GetBlockSize(scope) && instruction_index>=GetSize(scope)) { state=BlockState::BLOCK_COMPLETE; }
+        */
     }
     else if (ShouldTraverse(_scope))
     {

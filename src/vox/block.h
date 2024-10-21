@@ -24,6 +24,7 @@ public:
     Block(int _scope, int _block_index, std::vector<Instruction> _stack={});
 
     bool ShouldTraverse(int _scope);
+    bool HasWorkLeft(int _scope);
 
     bool GetRepeatBlock(int _scope);
     void SetRepeatBlock(bool value, int _scope);
