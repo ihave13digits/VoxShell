@@ -121,6 +121,18 @@ namespace MathState
     extern std::vector<std::string> keys;
 }
 
+namespace BlockState
+{
+    enum STATES
+    {
+        BLOCK_WAITING,
+        BLOCK_COMPLETE,
+        BLOCK_COMPUTING,
+    };
+    
+    extern std::vector<std::string> keys;
+}
+
 namespace Boolean
 {
     enum STATES

@@ -13,7 +13,7 @@ class Block
 
 private:
 
-    int scope, block_index;
+    int state=BlockState::BLOCK_WAITING, scope, block_index, block_instruction_index=0;
     std::unordered_map<std::string, Token> variables;
     std::vector<Instruction> stack;
     std::vector<Block> blocks;
@@ -23,6 +23,7 @@ public:
     Block(int _scope, int _block_index, std::vector<Instruction> _stack={});
 
     int GetSize();
+    int GetBlockSize();
 
     int GetScope();
     void SetScope(int _scope);

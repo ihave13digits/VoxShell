@@ -88,6 +88,13 @@ std::vector<std::string> MathState::keys =
     "<>!=|&"
 };
 
+std::vector<std::string> BlockState::keys =
+{
+    "Block Waiting",
+    "Block Complete",
+    "Block Computing",
+};
+
 std::vector<std::string> Boolean::keys =
 {
     "0",

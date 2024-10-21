@@ -11,6 +11,7 @@ std::vector<Token> Shell::ParseBlocks(std::vector<Token> tokens)
         if      (value==Syntax::keys[Syntax::SYNTAX_BLOCK_L])
         {
             current_scope++;
+            stack.PushBlock(Block(current_scope, stack.GetBlockSize()));
         }
         else if (value==Syntax::keys[Syntax::SYNTAX_BLOCK_R])
         {

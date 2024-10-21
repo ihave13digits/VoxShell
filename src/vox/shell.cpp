@@ -8,7 +8,7 @@ Shell::Shell()
 
 
 
-inline bool Shell::IsUserEngaged()
+bool Shell::IsUserEngaged()
 {
     return user_engaged;
 }
@@ -240,11 +240,24 @@ void Shell::PrintTokens(std::vector<Token> tokens)
 
 void Shell::PrintState()
 {
+    const int S = stack.GetBlockSize();
     std::cout << "Scope:" << current_scope;
     std::cout << " Stack:" << stack.GetSize();
-    std::cout << " Blocks:" << stack.GetBlocks().size();
+    std::cout << " Blocks:" << S;
     std::cout << " Variables:"<< stack.GetVariables().size();
     std::cout << std::endl;
+    if (S>0)
+    {
+        std::vector<Block> blocks = stack.GetBlocks();
+        for (int i=0; i<S; i++)
+        {
+            std::cout << "    Block:" << i;
+            std::cout << " Stack:" << blocks.at(i).GetSize();
+            std::cout << " Blocks:" << blocks.at(i).GetBlockSize();
+            std::cout << " Variables:"<< blocks.at(i).GetVariables().size();
+            std::cout << std::endl;
+        }
+    }
 }
 
 
@@ -314,7 +327,6 @@ void Shell::ParseScript(Script script)
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
     //std::cout <<"FirstPass:"<<std::endl;
-    //PrintState();
     //PrintTokens(tokens);
     tokens = ParseBlocks(tokens);
     tokens = ParseQuotes(tokens);
@@ -377,7 +389,7 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
         }
         //PrintTokens(tokens);
     }
-    //std::cout <<"Residual:"<<std::endl; PrintTokens(tokens);
+    //std::cout <<"Residual:"<<std::endl; PrintState(); PrintTokens(tokens);
     while(int(tokens.size())>1)
     {
         const int S = tokens.size();
@@ -393,7 +405,7 @@ void Shell::Evaluate(std::string line)
     int callback_count = 0;
     std::cout << "----------------------------------------------------------------" << std::endl;
     ParseLine(line);
-    while (stack.GetSize()>0)
+    while (stack.GetSize()>0 || stack.GetBlockSize()>0)
     {
         if (!IsUserEngaged()) { ClearStack(); break; }
         Instruction instruction = stack.GetNextInstruction();

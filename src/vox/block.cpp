@@ -11,8 +11,14 @@ Block::Block(int _scope, int _block_index, std::vector<Instruction> _stack)
 
 int Block::GetSize()
 {
-    if (blocks.size()>0) { return blocks[0].GetSize(); }
+    //if (blocks.size()>0) { return blocks[0].GetSize(); }
     return stack.size();
+}
+
+int Block::GetBlockSize()
+{
+    if (blocks.size()>0) { return blocks.size(); }
+    return 0;
 }
 
 int Block::GetScope()
@@ -37,7 +43,15 @@ void Block::SetBlockIndex(int _block_index)
 
 void Block::PopFront()
 {
-    stack.erase(stack.begin());
+    if (GetBlockSize()>0)
+    {
+        if (blocks.at(0).GetSize()>0) { blocks.at(0).PopFront(); }
+        else { blocks.erase(blocks.begin()); stack.erase(stack.begin()); }
+    }
+    else if (GetSize()>0)
+    {
+        stack.erase(stack.begin());
+    }
 }
 
 void Block::PushBack(Instruction instruction)
@@ -115,6 +129,7 @@ void Block::PushBlock(Block _block)
 
 Instruction Block::GetNextInstruction()
 {
+    if (GetBlockSize()>0 && blocks.at(0).GetSize()>0) { return blocks.at(0).GetNextInstruction(); }
     if (stack.size()<=0) { return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)}); }
     Instruction instruction = stack.at(0);
     return instruction;
