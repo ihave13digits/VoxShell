@@ -129,7 +129,7 @@ std::vector<Token> ExecuteExit(Instruction instruction)
 
 std::vector<Token> ExecuteFor(Instruction instruction)
 {
-    //shell.PrintTokens(instruction.GetArguments());
+    shell.PrintTokens(instruction.GetArguments());
     Token iter = instruction.GetArgument(0);
     Token oper = instruction.GetArgument(1);
     Token comp = instruction.GetArgument(2);
@@ -195,12 +195,7 @@ std::vector<Token> ExecuteFor(Instruction instruction)
             }
         }
     }
-    if (loop)
-    {
-        // Figure Out Pushing Block To Stack
-        
-        
-    }
+    shell.SetRepeatBlock(loop);
     return {};
 }
 

@@ -33,6 +33,9 @@ public:
     bool IsUserEngaged();
     void SetUserEngaged(bool value);
 
+    bool GetRepeatBlock();
+    void SetRepeatBlock(bool value);
+
     bool VariableExists(std::string name);
     void DeleteVariable(std::string name);
     Token GetVariable(std::string name);
@@ -57,6 +60,7 @@ public:
     bool IsStringInteger(std::string text);
     bool IsStringDecimal(std::string text);
     void PrintTokens(std::vector<Token> tokens);
+    void PrintInstructions(std::vector<Instruction> instructions);
     void PrintState();
 
     Token TokenizeSegment(std::string segment, int index);

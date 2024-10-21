@@ -1,13 +1,15 @@
-int depth = 10;
+int depth = 0;
 int result = 1;
 
 int i = 0;
+
+echo("Fibonacci Sequence (" depth ") = " result ", " result "");
+
 for(i < depth);
 {
     result = result + result;
+    echo(", " result)
 }
 
-echo("Fibonacci Sequence (" depth ") = " result "\n");
-
-delete(depth result i);
+echo("Task Complete. Exiting");
 exit();

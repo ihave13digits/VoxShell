@@ -18,31 +18,43 @@ void Shell::SetUserEngaged(bool value)
     user_engaged = value;
 }
 
+bool Shell::GetRepeatBlock()
+{
+    return stack.GetRepeatBlock(current_scope);
+}
+
+void Shell::SetRepeatBlock(bool value)
+{
+    if (value) { stack.SetState(BlockState::BLOCK_WAITING); }
+    else       { stack.SetState(BlockState::BLOCK_COMPUTING); }
+    stack.SetRepeatBlock(value, current_scope);
+}
+
 
 
 bool Shell::VariableExists(std::string name)
 {
-    return (stack.VariableNameExists(name));
+    return (stack.VariableNameExists(name, current_scope));
 }
 
 void Shell::DeleteVariable(std::string name)
 {
-    stack.DeleteVariable(name);
+    stack.DeleteVariable(name, current_scope);
 }
 
 Token Shell::GetVariable(std::string name)
 {
-    return stack.GetVariable(name);
+    return stack.GetVariable(name, current_scope);
 }
 
 void Shell::SetVariable(std::string name, Token value)
 {
-    stack.SetVariable(name, value);
+    stack.SetVariable(name, value, current_scope);
 }
 
 void Shell::PushVariable(Token value)
 {
-    stack.PushVariable(value);
+    stack.PushVariable(value, current_scope);
 }
 
 void Shell::ClearStack()
@@ -238,184 +250,52 @@ void Shell::PrintTokens(std::vector<Token> tokens)
     //std::cout << "----------------------------------------------------------------" << std::endl;
 }
 
-void Shell::PrintState()
+void Shell::PrintInstructions(std::vector<Instruction> instructions)
 {
-    const int S = stack.GetBlockSize();
-    std::cout << "Scope:" << current_scope;
-    std::cout << " Stack:" << stack.GetSize();
-    std::cout << " Blocks:" << S;
-    std::cout << " Variables:"<< stack.GetVariables().size();
-    std::cout << std::endl;
-    if (S>0)
-    {
-        std::vector<Block> blocks = stack.GetBlocks();
-        for (int i=0; i<S; i++)
-        {
-            std::cout << "    Block:" << i;
-            std::cout << " Stack:" << blocks.at(i).GetSize();
-            std::cout << " Blocks:" << blocks.at(i).GetBlockSize();
-            std::cout << " Variables:"<< blocks.at(i).GetVariables().size();
-            std::cout << std::endl;
-        }
-    }
-}
-
-
-
-inline Token Shell::TokenizeSegment(std::string segment, int index)
-{
-    int type = GetTokenType(segment);
-    return Token(index, type, segment);
-}
-
-inline std::vector<Token> Shell::TokenizeLine(std::string line)
-{
-    std::vector<Token> tokens;
-    std::string segment = "";
-    int index = 0;
-    if (line.substr(line.size()-1, 1)!=Syntax::keys[Syntax::SYNTAX_END]) { line = line+Syntax::keys[Syntax::SYNTAX_END]; }// Ensures All Data Is Gathered
-    for (int i=0; i<int(line.size()); i++)
-    {
-        std::string character = line.substr(i, 1);
-        bool break_point = IsBreakPoint(character);
-        // Syntax Told It To Pop Segment
-        if (break_point)
-        {
-            Token token = TokenizeSegment(segment, index);
-            if (token.GetType()!=SyntaxType::TYPE_INVALID) { tokens.push_back(token); }
-            segment = "";
-            // Gather Break Key As Separate Token
-            segment += character;
-            Token _token = TokenizeSegment(segment, i);
-            if (_token.GetType()!=SyntaxType::TYPE_INVALID) { tokens.push_back(_token); }
-            segment = "";
-            index = i+1;
-        }
-        else { segment += character; }
-    }
-    //PrintTokens(tokens);
-    return tokens;
-}
-
-
-
-void Shell::ParseLine(std::string line)
-{
-    if (line.size()==0) { return; }
-    std::vector<Token> tokens = TokenizeLine(line);
-    std::vector<Instruction> instructions = GenerateInstructions(tokens);
     for (int i=0; i<int(instructions.size()); i++)
     {
-        stack.PushBack(instructions[i]);
+        std::cout << "State:" << instructions.at(i).GetState();
+        std::cout << " Type:" << ReturnType::keys[instructions.at(i).GetType()];
+        std::cout << " Args:" << instructions.at(i).GetArgC();
+        std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
 
-void Shell::ParseScript(Script script)
+void Shell::PrintState()
 {
-    std::vector<Token> tokens;
-    std::vector<std::string> lines = script.GetLines();
-    for (int i=0; i<int(lines.size()); i++)
-    {
-        if (stack.GetSize()<stack_limit)
-        {
-            ParseLine(lines[i]);
-        }
-        else { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
-    }
-}
+    std::vector<Token> stack_vars = stack.GetVariables(current_scope);
+    std::vector<Instruction> stack_calls = stack.GetInstructions(0);
+    const int S = stack.GetBlockSize(current_scope);
 
-std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
-{
-    //std::cout <<"FirstPass:"<<std::endl;
-    //PrintTokens(tokens);
-    tokens = ParseBlocks(tokens);
-    tokens = ParseQuotes(tokens);
-    tokens = ParseVariables(tokens);
-    std::vector<Instruction> instructions;
-    std::string state = "";
-    bool computing = true;
-    //std::cout <<"SecondPass:"<<std::endl;
-    while (computing)
+    std::cout << "Scope:" << current_scope;
+    std::cout << " State:" << BlockState::keys[stack.GetState()];
+    std::cout << " Instruction:" << stack.GetInstructionIndex();
+    std::cout << "/" << stack.GetSize(current_scope);
+    std::cout << " Block:" << stack.GetBlockIndex();
+    std::cout << "/" << S;
+    std::cout << " Variables:"<< stack_vars.size();
+    std::cout << std::endl;
+    PrintTokens(stack_vars);
+    PrintInstructions(stack_calls);
+    if (S>0)
     {
-        //PrintTokens(tokens);
-        std::string state = "";
-        int call_index=-1, left_index=-1, right_index=-1;
-        for (int i=0; i<int(tokens.size()); i++)
+        std::vector<Block> blocks = stack.GetBlocks(current_scope);
+        for (int i=0; i<S; i++)
         {
-            std::string value = tokens.at(i).GetValue();
-            if (value==Operator::keys[Operator::OPERATOR_PAR_L]) { left_index = i; }
-            else if (value==Operator::keys[Operator::OPERATOR_PAR_R]) { right_index = i; break; }
-            else if (FunctionExists(value)) { state = "Function"; call_index = i; }
-            else if (value==Syntax::keys[Syntax::SYNTAX_END]) { break; }
+            int _scope = blocks.at(i).GetScope(current_scope);
+            std::vector<Token> _stack_vars = blocks.at(i).GetVariables(_scope);
+            std::vector<Instruction> _stack_calls = stack.GetInstructions(_scope);
+            std::cout << "    Scope:" << _scope;
+            std::cout << " State:" << BlockState::keys[blocks.at(i).GetState()];
+            std::cout << " Instruction:" << blocks.at(i).GetInstructionIndex();
+            std::cout << "/" << blocks.at(i).GetSize(_scope);
+            std::cout << " Block:" << blocks.at(i).GetBlockIndex();
+            std::cout << "/" << blocks.at(i).GetBlockSize(_scope);
+            std::cout << " Variables:"<< _stack_vars.size();
+            std::cout << std::endl;
+            PrintTokens(_stack_vars);
+            PrintInstructions(_stack_calls);
         }
-        if (state=="Function" && (call_index>-1 && left_index>call_index && right_index>left_index))
-        {
-            std::vector<Token> _tokens;
-            std::string call_name = tokens.at(call_index).GetValue();
-            for (int i=call_index; i<right_index; i++)
-            {
-                std::string value = tokens.at(left_index).GetValue();
-                if (value==Operator::keys[Syntax::SYNTAX_COMMA])
-                {
-                    _tokens.push_back(tokens.at(left_index));
-                }
-                if (value!=Operator::keys[Operator::OPERATOR_PAR_L] && value!=Operator::keys[Operator::OPERATOR_PAR_R])
-                {
-                    _tokens.push_back(tokens.at(left_index));
-                }
-                tokens.erase(tokens.begin()+call_index);
-            }
-            tokens.erase(tokens.begin()+call_index);
-            int argc = functions[call_name].GetArgumentCount();
-            while(int(_tokens.size())>argc)
-            {
-                const int S = _tokens.size();
-                _tokens = ParseEquals(_tokens); //if (int(_tokens.size())==S) { break; }
-                _tokens = ParseMath(_tokens); if (int(_tokens.size())==S) { break; }
-            }
-            if (functions[call_name].GetReturnType()!=ReturnType::RETURN_VOID)
-            {
-                Instruction instruction = Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens);
-                tokens.insert(tokens.begin()+call_index, functions[call_name].Call(instruction).at(0));
-            }
-            else
-            {
-                instructions.push_back(Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens));
-            }
-        }
-        else
-        {
-            computing = false; break;
-        }
-        //PrintTokens(tokens);
     }
-    //std::cout <<"Residual:"<<std::endl; PrintState(); PrintTokens(tokens);
-    while(int(tokens.size())>1)
-    {
-        const int S = tokens.size();
-        tokens = ParseEquals(tokens);
-        tokens = ParseMath(tokens);
-        if (int(tokens.size())==S) { break; }
-    }
-    return instructions;
-}
-
-void Shell::Evaluate(std::string line)
-{
-    int callback_count = 0;
-    std::cout << "----------------------------------------------------------------" << std::endl;
-    ParseLine(line);
-    while (stack.GetSize()>0 || stack.GetBlockSize()>0)
-    {
-        if (!IsUserEngaged()) { ClearStack(); break; }
-        Instruction instruction = stack.GetNextInstruction();
-        //PrintTokens(instruction.GetArguments());
-        functions[instruction.GetState()].Call(instruction);
-        stack.PopFront();
-        if (callback_count>stack_limit) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
-        callback_count++;
-    }
-    std::cout << "----------------------------------------------------------------" << std::endl;
-    PrintState();
-    std::cout << "----------------------------------------------------------------" << std::endl;
 }

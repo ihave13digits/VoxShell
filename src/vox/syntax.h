@@ -126,8 +126,8 @@ namespace BlockState
     enum STATES
     {
         BLOCK_WAITING,
-        BLOCK_COMPLETE,
         BLOCK_COMPUTING,
+        BLOCK_COMPLETE,
     };
     
     extern std::vector<std::string> keys;
