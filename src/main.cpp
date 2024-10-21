@@ -289,6 +289,7 @@ void Run()
         std::string line = ""; std::getline(std::cin, line);
         Timer timer = Timer();
         //time = timer.Tick();
+        shell.BypassStackCompleted();
         shell.Evaluate(line);
         std::cout << "\nTook: "<< timer.Tick() << " seconds.\n" << std::endl;
     }

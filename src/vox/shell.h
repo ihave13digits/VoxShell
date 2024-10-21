@@ -30,6 +30,8 @@ public:
 
     Shell();
 
+    void BypassStackCompleted();
+
     bool IsUserEngaged();
     void SetUserEngaged(bool value);
 

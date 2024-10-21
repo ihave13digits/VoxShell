@@ -8,6 +8,11 @@ Shell::Shell()
 
 
 
+void Shell::BypassStackCompleted()
+{
+    stack.SetState(BlockState::BLOCK_COMPUTING);
+}
+
 bool Shell::IsUserEngaged()
 {
     return user_engaged;
