@@ -2,18 +2,18 @@
 
 
 
-std::vector<Token> Generic::Foo(Instruction instruction)
+std::vector<Token> Generic::Func(Instruction instruction)
 {
     return {Token()};
 }
 
 
 
-Generic::Function::Function(int _argc, int _type, func _foo)
+Generic::Function::Function(int _argc, int _type, VoxFunction _func)
 {
     SetArgumentCount(_argc);
     SetReturnType(_type);
-    SetFunction(_foo);
+    SetFunction(_func);
 }
 
 int Generic::Function::GetArgumentCount()
@@ -36,12 +36,12 @@ void Generic::Function::SetReturnType(int _type)
     type = _type;
 }
 
-void Generic::Function::SetFunction(Generic::func _foo)
+void Generic::Function::SetFunction(Generic::VoxFunction _func)
 {
-    foo = _foo;
+    func = _func;
 }
 
 std::vector<Token> Generic::Function::Call(Instruction instruction)
 {
-    return foo(instruction);
+    return func(instruction);
 }

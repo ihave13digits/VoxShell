@@ -12,9 +12,9 @@
 
 namespace Generic
 {
-    using func = std::function<std::vector<Token>(Instruction)>;
+    using VoxFunction = std::function<std::vector<Token>(Instruction)>;
     
-    std::vector<Token> Foo(Instruction);
+    std::vector<Token> Func(Instruction); // A Template To Soothe The Compiler For Function::Function
     
     class Function
     {
@@ -22,16 +22,16 @@ namespace Generic
     private:
     
         int argc, type;
-        func foo;
+        VoxFunction func;
     
     public:
     
-        Function(int _argc=0, int _type=ReturnType::RETURN_VOID, func _foo=Foo);
+        Function(int _argc=0, int _type=ReturnType::RETURN_VOID, VoxFunction _func=Func);
         int GetArgumentCount();
         void SetArgumentCount(int _argc);
         int GetReturnType();
         void SetReturnType(int _type);
-        void SetFunction(func _foo);
+        void SetFunction(VoxFunction _func);
         std::vector<Token> Call(Instruction instruction);
     
     };
