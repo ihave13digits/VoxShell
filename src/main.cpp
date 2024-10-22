@@ -129,7 +129,7 @@ std::vector<Token> ExecuteExit(Instruction instruction)
 
 std::vector<Token> ExecuteFor(Instruction instruction)
 {
-    std::cout<<"For Called"<<std::endl;
+    //std::cout<<"For Called"<<std::endl;
     //shell.PrintTokens(instruction.GetArguments());
     Token iter = instruction.GetArgument(0);
     Token oper = instruction.GetArgument(1);
@@ -300,6 +300,7 @@ void Run()
 int main(int argc, char *argv[])
 {
     // TODO: Move These To "Standard Library"
+    shell.SetStackLimit(4096);
     shell.RegisterFunction("delete",    Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteDelete));
     shell.RegisterFunction("echo",      Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteEcho));
     shell.RegisterFunction("echi",      Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteEchi));

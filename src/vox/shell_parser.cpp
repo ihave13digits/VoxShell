@@ -394,7 +394,7 @@ void Shell::ParseScript(Script script)
         {
             ParseLine(lines[i]);
         }
-        else { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
+        else { ForceExit(SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED]); break; }
     }
 }
 
@@ -480,15 +480,22 @@ void Shell::Evaluate(std::string line)
     int callback_count = 0;
     std::cout << "----------------------------------------------------------------" << std::endl;
     ParseLine(line);
-    while (stack.GetState()!=BlockState::BLOCK_COMPLETE)
+    //while (stack.HasWorkLeft(0))
+    while (stack.GetState()!=BlockState::BLOCK_COMPLETE || stack.HasWorkLeft(0))
+    //while (stack.GetState()!=BlockState::BLOCK_COMPLETE)
     {
-        if (!IsUserEngaged()) { ClearStack(); stack.SetState(BlockState::BLOCK_COMPLETE); break; }
+        //std::cout<<"----------------"<<std::endl;
+        //PrintState();//PrintTokens(instruction.GetArguments());
         Instruction instruction = stack.GetNextInstruction(current_scope);
-        //PrintTokens(instruction.GetArguments());
-        functions[instruction.GetState()].Call(instruction);
-        stack.PopFront(current_scope);
-        if (callback_count>stack_limit) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
-        callback_count++;
+        if (instruction.GetState()!=SyntaxGlobal::empty_block)
+        {
+            functions[instruction.GetState()].Call(instruction);
+            stack.PopFront(current_scope);
+            if (callback_count>stack_limit) { ForceExit(SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED]); break; }
+            callback_count++;
+            if (!IsUserEngaged()) { ClearStack(); stack.SetState(BlockState::BLOCK_COMPLETE); break; }
+        }
+        else { break; }
     }
     std::cout << "----------------------------------------------------------------" << std::endl;
     PrintState();

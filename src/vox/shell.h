@@ -30,6 +30,7 @@ public:
 
     Shell();
 
+    void ForceExit(std::string message);
     void BypassStackCompleted();
 
     bool IsUserEngaged();

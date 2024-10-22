@@ -91,6 +91,7 @@ std::vector<std::string> MathState::keys =
 std::vector<std::string> BlockState::keys =
 {
     "Block Waiting",
+    "Block Repeating",
     "Block Computing",
     "Block Complete",
 };

@@ -126,6 +126,7 @@ namespace BlockState
     enum STATES
     {
         BLOCK_WAITING,
+        BLOCK_REPEATING,
         BLOCK_COMPUTING,
         BLOCK_COMPLETE,
     };

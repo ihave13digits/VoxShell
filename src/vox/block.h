@@ -14,7 +14,7 @@ class Block
 private:
 
     bool repeat_block = false;
-    int state=BlockState::BLOCK_COMPUTING, scope, block_index=-1, instruction_index=0;
+    int state=BlockState::BLOCK_WAITING, scope, block_index=0, instruction_index=0;
     std::unordered_map<std::string, Token> variables;
     std::vector<Instruction> stack;
     std::vector<Block> blocks;

@@ -8,6 +8,14 @@ Shell::Shell()
 
 
 
+void Shell::ForceExit(std::string message)
+{
+    std::cout << message << std::endl;
+    SetUserEngaged(false);
+    ClearStack();
+    stack.SetState(BlockState::BLOCK_COMPLETE);
+}
+
 void Shell::BypassStackCompleted()
 {
     stack.SetState(BlockState::BLOCK_COMPUTING);
@@ -30,7 +38,7 @@ bool Shell::GetRepeatBlock()
 
 void Shell::SetRepeatBlock(bool value)
 {
-    if (value) { stack.SetState(BlockState::BLOCK_WAITING); }
+    if (value) { stack.SetState(BlockState::BLOCK_REPEATING); }
     else       { stack.SetState(BlockState::BLOCK_COMPUTING); }
     stack.SetRepeatBlock(value, current_scope);
 }

@@ -18,6 +18,7 @@ bool Block::ShouldTraverse(int _scope)
 
 bool Block::HasWorkLeft(int _scope)
 {
+    if (ShouldTraverse(_scope)) { return blocks.at(block_index).HasWorkLeft(_scope); }
     return (state==BlockState::BLOCK_COMPLETE);//(GetBlockSize(scope)<=block_index);
 }
 
@@ -97,16 +98,17 @@ void Block::PopFront(int _scope)
     if (_scope==scope && state==BlockState::BLOCK_COMPUTING)
     {
         if (instruction_index<GetSize(scope)) { instruction_index++; }
-        if (instruction_index>=GetSize(scope))
+        if (instruction_index>=GetSize(scope) && block_index<GetBlockSize(scope))
         {
             if (repeat_block && blocks.at(block_index).GetState()==BlockState::BLOCK_COMPLETE)
             {
                 blocks.at(block_index).SetBlockIndex(0);
                 blocks.at(block_index).SetInstructionIndex(0);
-                blocks.at(block_index).SetState(BlockState::BLOCK_WAITING);
+                blocks.at(block_index).SetState(BlockState::BLOCK_REPEATING);
             }
             else
             {
+                blocks.at(block_index).SetState(BlockState::BLOCK_COMPLETE);
                 if (block_index<GetBlockSize(scope)) { block_index++; }
                 if (block_index>=GetBlockSize(scope) && instruction_index>=GetSize(scope)) { state=BlockState::BLOCK_COMPLETE; }
             }
@@ -207,18 +209,78 @@ std::vector<Instruction> Block::GetInstructions(int _scope)
 {
     if (ShouldTraverse(_scope)) { return blocks.at(block_index).GetInstructions(_scope); }
     else if (_scope==scope) { return stack; }
-    else { std::cout<<"Can't Find Instructions "<<_scope<<"/"<<scope<<"->"<<block_index<<"/"<<blocks.size()<<std::endl; }
+    /*
+    else
+    {
+        std::cout<<"Block::GetInstructions() Failed";
+        std::cout<<" S:"<<scope<<"/"<<_scope;
+        std::cout<<" I:"<<instruction_index<<"/"<<stack.size();
+        std::cout<<" B:"<<block_index<<"/"<<blocks.size();
+        std::cout<<std::endl;
+    }
+    */
     return {};
 }
-
+/*
 Instruction Block::GetNextInstruction(int _scope)
 {
     if (ShouldTraverse(_scope))
     {
-        if (blocks.at(block_index).GetState()==BlockState::BLOCK_WAITING) { return blocks.at(block_index).GetNextInstruction(_scope); }
-        if (blocks.at(block_index).GetState()==BlockState::BLOCK_COMPUTING) { return blocks.at(block_index).GetNextInstruction(_scope); }
+        std::cout<<"InstructionChoice1"<<std::endl;
+        if      (blocks.at(block_index).GetState()==BlockState::BLOCK_REPEATING) { return blocks.at(block_index).GetNextInstruction(_scope); }
+        else if (blocks.at(block_index).GetState()==BlockState::BLOCK_COMPUTING) { return blocks.at(block_index).GetNextInstruction(_scope); }
     }
-    else if (_scope==scope && instruction_index<GetSize(scope)) { return stack.at(instruction_index); }
-    else { std::cout<<"Can't Find Next Instruction"<<std::endl; }
+    else if (_scope>scope && block_index<=GetBlockSize(scope) && state==BlockState::BLOCK_REPEATING)
+    {
+        std::cout<<"InstructionChoice2"<<std::endl;
+        if      (blocks.at(block_index).GetState()==BlockState::BLOCK_REPEATING) { return blocks.at(block_index).GetNextInstruction(_scope); }
+        else if (blocks.at(block_index).GetState()==BlockState::BLOCK_COMPUTING) { return blocks.at(block_index).GetNextInstruction(_scope); }
+    }
+    else if (_scope==scope && instruction_index<GetSize(scope))
+    {
+        std::cout<<"InstructionChoice3"<<std::endl; return stack.at(instruction_index);
+    }
+    else { std::cout<<"Block::GetNextInstruction() Failed"<<std::endl; }
+    return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)});
+}
+*/
+
+Instruction Block::GetNextInstruction(int _scope)
+{
+    //std::cout<<BlockState::keys[state]<<"("<<_scope<<")...";
+    if (state==BlockState::BLOCK_REPEATING)
+    {
+        if (GetBlockSize(scope)>block_index)
+        {
+            //std::cout<<"Traversing"<<std::endl;
+            return blocks.at(block_index).GetNextInstruction(_scope);
+        }
+        else if (instruction_index<GetSize(scope))
+        {
+            //std::cout<<"Immediate"<<std::endl;
+            return stack.at(instruction_index);
+        }
+        else
+        {
+            return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)});
+        }
+    }
+    else
+    {
+        if (ShouldTraverse(_scope))
+        {
+            //std::cout<<"Traversing"<<std::endl;
+            return blocks.at(block_index).GetNextInstruction(_scope);
+        }
+        else if (instruction_index<GetSize(scope))
+        {
+            //std::cout<<"Immediate"<<std::endl;
+            return stack.at(instruction_index);
+        }
+        else
+        {
+            return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)});
+        }
+    }
     return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)});
 }
