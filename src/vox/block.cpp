@@ -13,7 +13,7 @@ Block::Block(int _scope, int _block_index, std::vector<Instruction> _stack)
 
 bool Block::ShouldTraverse(int _scope)
 {
-    return (_scope>scope && GetBlockSize(scope)>block_index);
+    return (_scope>scope && GetBlockSize(scope)>block_index && block_index>-1);
 }
 
 bool Block::HasWorkLeft(int _scope)
@@ -51,13 +51,15 @@ int Block::GetBlockSize(int _scope)
     return 0;
 }
 
-int Block::GetState()
+int Block::GetState(int _scope)
 {
+    if (ShouldTraverse(_scope)) { return blocks.at(block_index).GetState(_scope); }
     return state;
 }
 
-void Block::SetState(int _state)
+void Block::SetState(int _state, int _scope)
 {
+    if (ShouldTraverse(_scope)) { blocks.at(block_index).SetState(_state, _scope); }
     state = _state;
 }
 
@@ -73,8 +75,9 @@ void Block::SetScope(int new_scope, int _scope)
     scope = new_scope;
 }
 
-int Block::GetBlockIndex()
+int Block::GetBlockIndex(int _scope)
 {
+    if (ShouldTraverse(_scope)) { return blocks.at(block_index).GetBlockIndex(_scope); }
     return block_index;
 }
 
@@ -100,15 +103,15 @@ void Block::PopFront(int _scope)
         if (instruction_index<GetSize(scope)) { instruction_index++; }
         if (instruction_index>=GetSize(scope) && block_index<GetBlockSize(scope))
         {
-            if (repeat_block && blocks.at(block_index).GetState()==BlockState::BLOCK_COMPLETE)
+            if (repeat_block && blocks.at(block_index).GetState(_scope)==BlockState::BLOCK_COMPLETE)
             {
                 blocks.at(block_index).SetBlockIndex(0);
                 blocks.at(block_index).SetInstructionIndex(0);
-                blocks.at(block_index).SetState(BlockState::BLOCK_REPEATING);
+                blocks.at(block_index).SetState(BlockState::BLOCK_REPEATING, _scope);
             }
             else
             {
-                blocks.at(block_index).SetState(BlockState::BLOCK_COMPLETE);
+                blocks.at(block_index).SetState(BlockState::BLOCK_COMPLETE, _scope);
                 if (block_index<GetBlockSize(scope)) { block_index++; }
                 if (block_index>=GetBlockSize(scope) && instruction_index>=GetSize(scope)) { state=BlockState::BLOCK_COMPLETE; }
             }
@@ -122,10 +125,8 @@ void Block::PopFront(int _scope)
 
 void Block::PushBack(Instruction instruction, int _scope)
 {
-    if (_scope>scope && GetBlockSize(scope)>block_index) { blocks.at(block_index).PushBack(instruction, _scope); }
+    if (ShouldTraverse(_scope)) { blocks.at(block_index).PushBack(instruction, _scope); }
     else if (_scope==scope) { stack.push_back(instruction); }
-    else if (_scope<scope) { std::cout<<"Out of Scope"<<std::endl; }
-    else { std::cout<<"Oof"<<std::endl; }
 }
 
 
@@ -138,44 +139,39 @@ bool Block::VariableNameExists(std::string name, int _scope)
 
 void Block::PushVariable(Token token, int _scope)
 {
-    if (_scope==scope)
+    if (ShouldTraverse(_scope)) { blocks.at(block_index).PushVariable(token, _scope); }
+    else if (_scope==scope)
     {
         if      (!VariableNameExists(token.GetName(), _scope) && _scope==scope) { variables.emplace(token.GetName(), token); }
         else if ( VariableNameExists(token.GetName(), _scope) && _scope==scope) { SetVariable(token.GetName(), token, _scope); }
     }
-    else if (ShouldTraverse(_scope)) { blocks.at(block_index).PushVariable(token, _scope); }
     //for (auto& it : variables) { std::cout << it.second.GetName() << ":" << it.second.GetValue() <<"; "; } std::cout<<std::endl;
 }
 
 void Block::DeleteVariable(std::string name, int _scope)
 {
-    if (!VariableNameExists(name, _scope)) { return; }
-    if      (_scope==scope) { variables.erase(name); }
-    else if (ShouldTraverse(_scope)) { blocks.at(block_index).DeleteVariable(name, _scope); }
+    //if (!VariableNameExists(name, _scope)) { return; }
+    if (ShouldTraverse(_scope)) { blocks.at(block_index).DeleteVariable(name, _scope); }
+    else if (_scope==scope) { variables.erase(name); }
 }
 
 Token Block::GetVariable(std::string name, int _scope)
 {
-    if (VariableNameExists(name, scope)) { return variables[name]; }
-    else return Token();
+    if (ShouldTraverse(_scope)) { return blocks.at(block_index).GetVariable(name, _scope); }
+    else if (_scope==scope && VariableNameExists(name, _scope)) { return variables[name]; }
+    return Token();
 }
 
 void Block::SetVariable(std::string name, Token token, int _scope)
 {
-    if     (VariableNameExists(name, scope) && _scope==scope) { variables[name]=token; }
-    else if (VariableNameExists(name, _scope) && ShouldTraverse(_scope)) { blocks.at(block_index).SetVariable(name, token, _scope); }
+    if (ShouldTraverse(_scope) && VariableNameExists(name, _scope)) { blocks.at(block_index).SetVariable(name, token, _scope); }
+    else if (_scope==scope && VariableNameExists(name, scope)) { variables[name]=token; }
 }
 
 std::vector<Token> Block::GetVariables(int _scope)
 {
     if (ShouldTraverse(_scope)) { return blocks.at(block_index).GetVariables(_scope); }
-    std::vector <Token> v;
-
-    for (auto& it : variables)
-    {
-        v.push_back( it.second );
-    }
-
+    std::vector <Token> v; for (auto& it : variables) { v.push_back( it.second ); }
     return v;
 }
 
@@ -199,8 +195,8 @@ void Block::SetBlocks(std::vector<Block> _blocks)
 
 void Block::PushBlock(Block _block, int _scope)
 {
-    if (_scope==scope) { blocks.push_back(_block); }
-    else if (ShouldTraverse(_scope)) { blocks.at(block_index).PushBlock(_block, _scope); }
+    if (ShouldTraverse(_scope)) { blocks.at(block_index).PushBlock(_block, _scope); }
+    else if (_scope==scope) { blocks.push_back(_block); }
 }
 
 

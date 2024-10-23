@@ -20,7 +20,7 @@ std::vector<Token> ExecuteDelete(Instruction instruction)
     return {};
 }
 
-std::vector<Token> ExecuteEcho(Instruction instruction)
+std::vector<Token> ExecutePrint(Instruction instruction)
 {
     std::vector<Token> args = instruction.GetArguments();
     const int S = args.size();
@@ -105,9 +105,9 @@ std::vector<Token> ExecuteEcho(Instruction instruction)
     return {};
 }
 
-std::vector<Token> ExecuteEchi(Instruction instruction)
+std::vector<Token> ExecuteInput(Instruction instruction)
 {
-    ExecuteEcho(instruction);
+    ExecutePrint(instruction);
     std::string line = ""; std::getline(std::cin, line);
     return {Token(instruction.GetArgument(0).GetIndex(), SyntaxType::TYPE_STRING, line, "")};
 }
@@ -130,13 +130,18 @@ std::vector<Token> ExecuteExit(Instruction instruction)
 std::vector<Token> ExecuteFor(Instruction instruction)
 {
     //std::cout<<"For Called"<<std::endl;
-    //shell.PrintTokens(instruction.GetArguments());
+    shell.PrintTokens(instruction.GetArguments());
     Token iter = instruction.GetArgument(0);
     Token oper = instruction.GetArgument(1);
     Token comp = instruction.GetArgument(2);
     std::string var_name = iter.GetName();
     bool loop = false;
     Token replace;
+    if (comp.GetValue()==Operator::keys[Operator::OPERATOR_SET])
+    {
+        oper.SetValue(oper.GetValue()+comp.GetValue());
+        comp = instruction.GetArgument(3);
+    }
     if (shell.VariableExists(var_name))
     {
         replace = shell.GetVariable(var_name);
@@ -196,7 +201,10 @@ std::vector<Token> ExecuteFor(Instruction instruction)
             }
         }
     }
-    shell.SetRepeatBlock(loop);
+    if (loop)
+    {
+        shell.SetExpectingBlock(SyntaxGlobal::repeat_block);
+    }
     return {};
 }
 
@@ -302,8 +310,8 @@ int main(int argc, char *argv[])
     // TODO: Move These To "Standard Library"
     shell.SetStackLimit(4096);
     shell.RegisterFunction("delete",    Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteDelete));
-    shell.RegisterFunction("echo",      Generic::Function(-1, ReturnType::RETURN_VOID, ExecuteEcho));
-    shell.RegisterFunction("echi",      Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteEchi));
+    shell.RegisterFunction("print",     Generic::Function(-1, ReturnType::RETURN_VOID, ExecutePrint));
+    shell.RegisterFunction("input",     Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteInput));
     shell.RegisterFunction("eval",      Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteEval));
     shell.RegisterFunction("exit",      Generic::Function( 0, ReturnType::RETURN_VOID, ExecuteExit));
     shell.RegisterFunction("for",       Generic::Function( 3, ReturnType::RETURN_VOID, ExecuteFor));

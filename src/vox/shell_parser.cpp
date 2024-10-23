@@ -10,11 +10,19 @@ std::vector<Token> Shell::ParseBlocks(std::vector<Token> tokens)
         std::string value = token.GetValue();
         if      (value==Syntax::keys[Syntax::SYNTAX_BLOCK_L])
         {
+            PrintShellHint("ParseBlocks", "Starting Block");
             stack.PushBlock(Block(current_scope+1, stack.GetBlockSize(current_scope)), current_scope);
             current_scope++;
+            if (call_expecting_block!="")
+            {
+                // This Isn't Being Caqught At The Right Time
+                if (call_expecting_block==SyntaxGlobal::repeat_block) { SetRepeatBlock(true); }
+                call_expecting_block = "";
+            }
         }
         else if (value==Syntax::keys[Syntax::SYNTAX_BLOCK_R])
         {
+            PrintShellHint("ParseBlocks", "Ending Block");
             current_scope--;
         }
         else
@@ -48,6 +56,7 @@ std::vector<Token> Shell::ParseQuotes(std::vector<Token> tokens)
                 if (i>=int(tokens.size())) { searching = false; break; }
                 tokens.erase(tokens.begin()+i);
             }
+            PrintShellHint("ParseQuotes", "Found End");
             token.SetValue(data); token.SetType(SyntaxType::TYPE_STRING);
         }
         if (value!=Syntax::keys[Syntax::SYNTAX_SPACE]) { condensed.push_back(token); }
@@ -63,7 +72,8 @@ std::vector<Token> Shell::ParseVariables(std::vector<Token> tokens)
         Token token = tokens.at(i);
         if (token.GetType()==SyntaxType::TYPE_UNKNOWN && VariableExists(token.GetValue()))
         {
-            condensed.push_back(stack.GetVariable(token.GetValue(), current_scope));
+            PrintShellHint("ParseVariables", "Variable Found");
+            condensed.push_back(stack.GetVariable(token.GetValue(), 0));
         }
         else { condensed.push_back(token); }
     }
@@ -300,7 +310,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
                     }
                     condensed.insert(condensed.begin()+(operation_index-2), solved);
                 }
-                else { computing=false; break; }
+                else { PrintShellHint("ParseEquals", "[Initial Set] Unsolved Problem"); computing=false; break; }
             }
             else if (operation_index==1 && operation_index+1<int(condensed.size()))
             {
@@ -313,10 +323,10 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
                     }
                     condensed.insert(condensed.begin()+(operation_index-1), solved);
                 }
-                else { computing=false; break; }
+                else { PrintShellHint("ParseEquals", "[Reset] Unsolved Problem"); computing=false; break; }
             }
         }
-        else { computing=false; break; }
+        else { PrintShellHint("ParseEquals", "No Operation"); computing=false; break; }
         //PrintTokens(condensed);
     }
     for (int i=0; i<int(condensed.size()); i++)
@@ -386,13 +396,12 @@ void Shell::ParseLine(std::string line)
 
 void Shell::ParseScript(Script script)
 {
-    std::vector<Token> tokens;
     std::vector<std::string> lines = script.GetLines();
     for (int i=0; i<int(lines.size()); i++)
     {
         if (stack.GetSize(current_scope)<stack_limit)
         {
-            ParseLine(lines[i]);
+            ParseLine(lines.at(i));
         }
         else { ForceExit(SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED]); break; }
     }
@@ -400,6 +409,7 @@ void Shell::ParseScript(Script script)
 
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
+    //PrintState();
     //std::cout <<"FirstPass:"<<std::endl; //PrintTokens(tokens);
     tokens = ParseBlocks(tokens);
     tokens = ParseQuotes(tokens);
@@ -459,6 +469,7 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
         }
         else
         {
+            PrintShellHint("GenerateInstructions", "Generation Complete");
             computing = false; break;
         }
         //PrintTokens(tokens);
@@ -480,8 +491,8 @@ void Shell::Evaluate(std::string line)
     int callback_count = 0;
     std::cout << "----------------------------------------------------------------" << std::endl;
     ParseLine(line);
-    //while (stack.HasWorkLeft(0))
-    while (stack.GetState()!=BlockState::BLOCK_COMPLETE || stack.HasWorkLeft(0))
+    //while (stack.HasWorkLeft(current_scope))
+    while (stack.GetState(0)!=BlockState::BLOCK_COMPLETE || stack.HasWorkLeft(0))
     //while (stack.GetState()!=BlockState::BLOCK_COMPLETE)
     {
         //std::cout<<"----------------"<<std::endl;
@@ -491,9 +502,9 @@ void Shell::Evaluate(std::string line)
         {
             functions[instruction.GetState()].Call(instruction);
             stack.PopFront(current_scope);
-            if (callback_count>stack_limit) { ForceExit(SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED]); break; }
+            if (callback_count>stack_limit) { PrintState(); ForceExit(SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED]); break; }
             callback_count++;
-            if (!IsUserEngaged()) { ClearStack(); stack.SetState(BlockState::BLOCK_COMPLETE); break; }
+            if (!IsUserEngaged()) { ClearStack(); stack.SetState(BlockState::BLOCK_COMPLETE, 0); break; }
         }
         else { break; }
     }
