@@ -1,3 +1,3 @@
-echo("1"+"2"+"3"+"4");
-echo("Same " "Line ");
-echo("As This!");
+print("1"+"2"+"3"+"4");
+print("Same " "Line ");
+print("As This!");

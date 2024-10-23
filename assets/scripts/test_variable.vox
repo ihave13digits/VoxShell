@@ -1,18 +1,18 @@
 bool b = true;
-echo("Boolean Variable b" " = ");
-echo(b);
+print("Boolean Variable b" " = ");
+print(b);
 
 b = false;
-echo("Boolean Variable b" " changed to ");
-echo(b);
+print("Boolean Variable b" " changed to ");
+print(b);
 
 
 
 int r = rand() % 100;
-echo("Integer Variable r" " = " r "\n");
+print("Integer Variable r" " = " r "\n");
 
 r = rand() % r;
-echo("Integer Variable r" " changed to " r "\n");
+print("Integer Variable r" " changed to " r "\n");
 
 delete(b);
 delete(r);

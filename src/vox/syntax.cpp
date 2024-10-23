@@ -1,7 +1,9 @@
 #include "syntax.h"
 
-std::string SyntaxGlobal::blank_instruction = "__InstructionIsBlank__";
 std::string SyntaxGlobal::empty_block = "__BlockIsEmpty__";
+std::string SyntaxGlobal::repeat_block = "__RepeatBlock__";
+
+std::string SyntaxGlobal::blank_instruction = "__InstructionIsBlank__";
 std::string SyntaxGlobal::unsolved_problem = "__UnsolvedProblem__";
 
 std::string SyntaxGlobal::source_is_direct = "__SourceIsDirect__";

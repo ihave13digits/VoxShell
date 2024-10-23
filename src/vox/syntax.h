@@ -7,8 +7,10 @@
 
 namespace SyntaxGlobal
 {
-    extern std::string blank_instruction;
     extern std::string empty_block;
+    extern std::string repeat_block;
+
+    extern std::string blank_instruction;
     extern std::string unsolved_problem;
 
     extern std::string source_is_direct;

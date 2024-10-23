@@ -3,28 +3,28 @@ bool F = false;
 bool B = true;
 
 B = T || T;
-echo("1 || 1" " = ");
-echo(B);
+print("1 || 1" " = ");
+print(B);
 
 B = T || F;
-echo("1 || 0" " = ");
-echo(B);
+print("1 || 0" " = ");
+print(B);
 
 B = F || F;
-echo("0 || 0" " = ");
-echo(B);
+print("0 || 0" " = ");
+print(B);
 
 B = T && T;
-echo("1 && 1" " = ");
-echo(B);
+print("1 && 1" " = ");
+print(B);
 
 B = T && F;
-echo("1 && 0" " = ");
-echo(B);
+print("1 && 0" " = ");
+print(B);
 
 B = F && F;
-echo("0 && 0" " = ");
-echo(B);
+print("0 && 0" " = ");
+print(B);
 
 
 delete(T F B);

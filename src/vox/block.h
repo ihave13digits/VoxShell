@@ -32,13 +32,13 @@ public:
     int GetSize(int _scope);
     int GetBlockSize(int _scope);
 
-    int GetState();
-    void SetState(int _state);
+    int GetState(int _scope);
+    void SetState(int _state, int _scope);
 
     int GetScope(int _scope);
     void SetScope(int new_scope, int _scope);
 
-    int GetBlockIndex();
+    int GetBlockIndex(int _scope);
     void SetBlockIndex(int _block_index);
 
     int GetInstructionIndex();

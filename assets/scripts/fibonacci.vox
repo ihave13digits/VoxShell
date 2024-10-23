@@ -3,13 +3,13 @@ int result = 1;
 
 int i = 0;
 
-echo("Fibonacci Sequence (" depth ") = " result ", " result "");
+print("Fibonacci Sequence (" depth ") = " result ", " result "");
 
 for(i < depth);
 {
     result = result + result;
-    echo(", " result)
+    print(", " result)
 }
 
-echo("Task Complete. Exiting");
+print("Task Complete. Exiting");
 exit();

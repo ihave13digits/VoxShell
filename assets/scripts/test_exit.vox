@@ -1,2 +1,2 @@
-echo("Test Complete.  Exiting");
+print("Test Complete.  Exiting");
 exit();
