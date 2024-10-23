@@ -10,8 +10,9 @@ class Instruction
 
 private:
 
-    int type, argc;
-    std::string state;
+    int type; // Refers to ReturnType
+    int argc; // Expected Argument Count (-1 Is For Arbitrary Amount)
+    std::string state; // The Call Name
     std::vector<Token> args;
 
 public:
