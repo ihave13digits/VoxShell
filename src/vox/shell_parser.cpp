@@ -15,20 +15,26 @@ std::vector<Token> Shell::ParseBlocks(std::vector<Token> tokens)
             current_scope++;
             if (call_expecting_block!="")
             {
+                PrintShellHint("ParseBlocks", "Call Expecting Block ("+call_expecting_block+")");
                 // This Isn't Being Caqught At The Right Time
-                if (call_expecting_block==SyntaxGlobal::repeat_block) { SetRepeatBlock(true); }
-                call_expecting_block = "";
+                if (call_expecting_block==SyntaxGlobal::repeat_block) { SetRepeatBlock(true, current_scope); }
+                
             }
         }
         else if (value==Syntax::keys[Syntax::SYNTAX_BLOCK_R])
         {
+            if (call_expecting_block!="")
+            {
+                if (call_expecting_block==SyntaxGlobal::repeat_block) { SetRepeatBlock(false, current_scope); call_expecting_block = ""; }
+                
+            }
             PrintShellHint("ParseBlocks", "Ending Block");
             current_scope--;
         }
-        else
-        {
+        //else
+        //{
             condensed.push_back(tokens.at(i));
-        }
+        //}
     }
     return condensed;
 }
@@ -392,6 +398,7 @@ void Shell::ParseLine(std::string line)
     {
         stack.PushBack(instructions[i], current_scope);
     }
+    
 }
 
 void Shell::ParseScript(Script script)
@@ -486,15 +493,25 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
     return instructions;
 }
 
-void Shell::Evaluate(std::string line)
+void Shell::EvaluateLine(std::string line)
+{
+    std::string separator = GetColorString("----------------------------------------------------------------", 64,64,64);
+    std::cout << separator << std::endl;
+    ParseLine(line);
+    Evaluate();
+    std::cout << separator << std::endl;
+    PrintState();
+    std::cout << separator << std::endl;
+}
+
+void Shell::Evaluate()
 {
     int callback_count = 0;
-    std::cout << "----------------------------------------------------------------" << std::endl;
-    ParseLine(line);
     //while (stack.HasWorkLeft(current_scope))
     while (stack.GetState(0)!=BlockState::BLOCK_COMPLETE || stack.HasWorkLeft(0))
     //while (stack.GetState()!=BlockState::BLOCK_COMPLETE)
     {
+        if (step_parsing) { std::string line = ""; std::getline(std::cin, line); if (line=="x") { ForceExit("User Quit"); break; } }
         //std::cout<<"----------------"<<std::endl;
         //PrintState();//PrintTokens(instruction.GetArguments());
         Instruction instruction = stack.GetNextInstruction(current_scope);
@@ -508,7 +525,4 @@ void Shell::Evaluate(std::string line)
         }
         else { break; }
     }
-    std::cout << "----------------------------------------------------------------" << std::endl;
-    PrintState();
-    std::cout << "----------------------------------------------------------------" << std::endl;
 }

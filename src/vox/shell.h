@@ -19,6 +19,8 @@ class Shell
 private:
 
     std::string call_expecting_block = "";
+    bool step_parsing = false;
+    bool output_debug = false;
     bool user_engaged = true;
     int stack_limit = 4096;
     int current_scope = 0;
@@ -34,6 +36,8 @@ public:
     std::string GetColorString(std::string text, int R, int G, int B);
     void PrintShellCall(std::string call, std::string args);
     void PrintShellHint(std::string call, std::string hint);
+    void PrintShellWarning(std::string text);
+    void PrintShellError(std::string text);
 
     void ForceExit(std::string message);
     void BypassStackCompleted();
@@ -42,7 +46,7 @@ public:
     void SetUserEngaged(bool value);
 
     bool GetRepeatBlock();
-    void SetRepeatBlock(bool value);
+    void SetRepeatBlock(bool value, int _scope);
     void SetExpectingBlock(std::string state);
 
     bool VariableExists(std::string name);
@@ -101,7 +105,8 @@ public:
 
     std::vector<Instruction> GenerateInstructions(std::vector<Token> tokens);
 
-    void Evaluate(std::string line);
+    void EvaluateLine(std::string line);
+    void Evaluate();
 
 };
 

@@ -130,7 +130,7 @@ std::vector<Token> ExecuteExit(Instruction instruction)
 std::vector<Token> ExecuteFor(Instruction instruction)
 {
     //std::cout<<"For Called"<<std::endl;
-    shell.PrintTokens(instruction.GetArguments());
+    //shell.PrintTokens(instruction.GetArguments());
     Token iter = instruction.GetArgument(0);
     Token oper = instruction.GetArgument(1);
     Token comp = instruction.GetArgument(2);
@@ -205,7 +205,8 @@ std::vector<Token> ExecuteFor(Instruction instruction)
     {
         shell.SetExpectingBlock(SyntaxGlobal::repeat_block);
     }
-    return {};
+    shell.PrintTokens({Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(loop), "")});
+    return {Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(loop), "")};
 }
 
 std::vector<Token> ExecuteIf(Instruction instruction)
@@ -287,7 +288,7 @@ void Eval(int argc, char *argv[])
     {
         line += argv[i];
     }
-    shell.Evaluate(line);
+    shell.EvaluateLine(line);
 }
 
 void Run()
@@ -298,7 +299,7 @@ void Run()
         Timer timer = Timer();
         //time = timer.Tick();
         shell.BypassStackCompleted();
-        shell.Evaluate(line);
+        shell.EvaluateLine(line);
         std::cout << "\nTook: "<< timer.Tick() << " seconds.\n" << std::endl;
     }
 }
@@ -314,7 +315,7 @@ int main(int argc, char *argv[])
     shell.RegisterFunction("input",     Generic::Function(-1, ReturnType::RETURN_STRING, ExecuteInput));
     shell.RegisterFunction("eval",      Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteEval));
     shell.RegisterFunction("exit",      Generic::Function( 0, ReturnType::RETURN_VOID, ExecuteExit));
-    shell.RegisterFunction("for",       Generic::Function( 3, ReturnType::RETURN_VOID, ExecuteFor));
+    shell.RegisterFunction("for",       Generic::Function( 3, ReturnType::RETURN_BOOLEAN, ExecuteFor));
     shell.RegisterFunction("if",        Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteIf));
     shell.RegisterFunction("include",   Generic::Function( 1, ReturnType::RETURN_VOID, ExecuteInclude));
     shell.RegisterFunction("to_string", Generic::Function( 1, ReturnType::RETURN_STRING, ExecuteToString));

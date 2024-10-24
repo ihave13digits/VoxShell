@@ -15,17 +15,155 @@ std::string Shell::GetColorString(std::string text, int R, int G, int B)
 
 void Shell::PrintShellCall(std::string call, std::string args)
 {
-    std::cout<<GetColorString("Shell::"+call+"(",0,255,0)+GetColorString(args,255,255,0)+GetColorString(")",0,255,0)<<std::endl;
+    if (output_debug) { std::cout<<GetColorString("Shell::"+call+"(",0,255,255)+GetColorString(args,0,255,0)+GetColorString(")",0,255,255)<<std::endl; }
 }
 
 void Shell::PrintShellHint(std::string call, std::string hint)
 {
-    std::cout<<GetColorString("Shell::"+call+"() -> ",255,255,0)+GetColorString(hint,255,127,0)<<std::endl;
+    if (output_debug) { std::cout<<GetColorString("Shell::"+call+"() -> ",255,255,0)+GetColorString(hint,255,127,0)<<std::endl; }
 }
+
+void Shell::PrintShellWarning(std::string text)
+{
+    if (output_debug) { std::cout<<GetColorString("Warning: ",255,255,0)+GetColorString(text,255,255,255)<<std::endl; }
+}
+
+void Shell::PrintShellError(std::string text)
+{
+    if (output_debug) { std::cout<<GetColorString("Error: ",255,0,0)+GetColorString(text,255,255,0)<<std::endl; }
+}
+
+
+
+void Shell::PrintTokens(std::vector<Token> tokens)
+{
+    //std::cout << "----------------------------------------------------------------" << std::endl;
+    for (int i=0; i<int(tokens.size()); i++)
+    {
+        std::cout << GetColorString("(", 0,212,0) << GetColorString(tokens[i].GetValue(), 255,255,255);
+        std::cout << GetColorString(") Type[", 0,212,0);
+        std::cout << GetColorString(SyntaxType::keys[tokens[i].GetType()], 255,255,255);
+        std::cout << GetColorString("] Name[", 0,212,0);
+        std::cout << GetColorString(tokens[i].GetName(), 255,255,255);
+        std::cout << GetColorString("] @ Index:", 0,212,0);
+        std::cout << GetColorString(std::to_string(tokens[i].GetIndex()), 255,255,255) << std::endl;
+    }
+    std::cout << std::endl;
+    //std::cout << "----------------------------------------------------------------" << std::endl;
+}
+
+void Shell::PrintInstructions(std::vector<Instruction> instructions)
+{
+    for (int i=0; i<int(instructions.size()); i++)
+    {
+        std::cout << GetColorString("State:", 255,128,  0) << GetColorString(instructions.at(i).GetState(), 255,255,255);
+        std::cout << GetColorString(" Type:", 255,128,  0) << GetColorString(ReturnType::keys[instructions.at(i).GetType()], 255,255,255);
+        std::cout << GetColorString(" Args:", 255,128,  0) << GetColorString(std::to_string(instructions.at(i).GetArgC()), 255,255,255);
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+///*
+void Shell::PrintState()
+{
+    std::string title = "================================================================\n"
+                        "                        - State Summary -                       \n"
+                        "================================================================";
+    std::cout << GetColorString(title, 0, 128, 128) << std::endl;
+    std::vector<Token> stack_vars = stack.GetVariables(current_scope);
+    std::vector<Instruction> stack_calls = stack.GetInstructions(current_scope);
+    const int S = stack.GetBlockSize(current_scope);
+
+    std::cout << GetColorString("Scope:",128,0,255) << GetColorString(std::to_string(current_scope), 255,255,255);
+    std::cout << GetColorString(" Instruction:",128,0,255) << GetColorString(std::to_string(stack.GetInstructionIndex()), 255,255,255);
+    std::cout << GetColorString("/"+std::to_string(stack.GetSize(current_scope)), 255,255,255);
+    std::cout << GetColorString(" Block:",128,0,255) << GetColorString(std::to_string(stack.GetBlockIndex(current_scope)), 255,255,255);
+    std::cout << GetColorString("/"+std::to_string(S), 255,255,255);
+    std::cout << GetColorString(" Variables:",128,0,255) << GetColorString(std::to_string(stack_vars.size()), 255,255,255);
+    std::cout << GetColorString(" State:",128,0,255) << GetColorString(BlockState::keys[stack.GetState(current_scope)], 255,255,255);
+    std::cout << std::endl;
+    PrintTokens(stack_vars);
+    PrintInstructions(stack_calls);
+    if (S>0)
+    {
+        std::vector<Block> blocks = stack.GetBlocks(current_scope);
+        for (int i=0; i<S; i++)
+        {
+            int _scope = blocks.at(i).GetScope(current_scope);
+            std::vector<Token> _stack_vars = blocks.at(i).GetVariables(_scope);
+            std::vector<Instruction> _stack_calls = stack.GetInstructions(_scope);
+            std::cout << GetColorString("    Scope:",128,0,255) << GetColorString(std::to_string(_scope), 255,255,255);
+            std::cout << GetColorString(" Instruction:",128,0,255) << GetColorString(std::to_string(blocks.at(i).GetInstructionIndex()), 255,255,255);
+            std::cout << GetColorString("/"+std::to_string(blocks.at(i).GetSize(_scope)), 255,255,255);
+            std::cout << GetColorString(" Block:",128,0,255) << GetColorString(std::to_string(blocks.at(i).GetBlockIndex(_scope)), 255,255,255);
+            std::cout << GetColorString("/"+std::to_string(blocks.at(i).GetBlockSize(_scope)), 255,255,255);
+            std::cout << GetColorString(" Variables:",128,0,255) << GetColorString(std::to_string(_stack_vars.size()), 255,255,255);
+            std::cout << GetColorString(" State:",128,0,255) << GetColorString(BlockState::keys[blocks.at(i).GetState(_scope)], 255,255,255);
+            std::cout << std::endl;
+            PrintTokens(_stack_vars);
+            PrintInstructions(_stack_calls);
+        }
+    }
+}
+//*/
+/*
+void Shell::PrintState()
+{
+    const int SCOPE = current_scope;
+    std::cout << "================================================================" << std::endl;
+    std::cout << "==================== - Shell State Summary - ===================" << std::endl;
+    std::cout << "================================================================" << std::endl;
+    std::vector<Block> blocks = stack.GetBlocks(SCOPE);
+    std::vector<Token> stack_vars = stack.GetVariables(SCOPE);
+    std::vector<Instruction> stack_calls = stack.GetInstructions(SCOPE);
+    const int S = blocks.size();
+
+    std::cout << "Scope:" << SCOPE;
+    std::cout << " Instruction:" << stack.GetInstructionIndex();
+    std::cout << "/" << stack.GetSize(SCOPE);
+    std::cout << " Block:" << stack.GetBlockIndex(SCOPE);
+    std::cout << "/" << S;
+    std::cout << " Variables:"<< stack_vars.size();
+    std::cout << " State:" << BlockState::keys[stack.GetState(SCOPE)];
+    std::cout << std::endl;
+    // Print Variables
+    std::cout << "Variables: ";
+    for (int i=0; i<int(stack_vars.size()); i++)
+    {
+        Token var = stack_vars.at(i);
+        if (i>0) { std::cout<<", "; }
+        std::cout<<var.GetName()<<":"<<var.GetValue();
+    }
+    std::cout << std::endl;
+    // Print Calls
+    std::cout << "Calls: ";
+    for (int i=0; i<int(stack_calls.size()); i++)
+    {
+        Instruction call = stack_calls.at(i);
+        if (i>0) { std::cout<<", "; }
+        std::cout<<ReturnType::keys[call.GetType()]<<" "<<call.GetState()<<"(";
+        std::vector<Token> args = call.GetArguments();
+        for (int a=0; a<int(args.size()); a++)
+        {
+            Token arg = args.at(a);
+            if (a>0) { std::cout<<", "; }
+            std::cout<<arg.GetValue();
+            std::string name = arg.GetName();
+            if (name!="") { std::cout<<"("<<name<<")"; }
+        }
+        std::cout<<")";
+    }
+    std::cout << std::endl;
+
+}
+*/
+
+
 
 void Shell::ForceExit(std::string message)
 {
-    PrintShellHint("Exit", message);
+    PrintShellError(message);
+    PrintShellHint("ForceExit", "Clearing Stack");
     SetUserEngaged(false);
     ClearStack();
     stack.SetState(BlockState::BLOCK_COMPLETE, 0);
@@ -51,12 +189,12 @@ bool Shell::GetRepeatBlock()
     return stack.GetRepeatBlock(current_scope);
 }
 
-void Shell::SetRepeatBlock(bool value)
+void Shell::SetRepeatBlock(bool value, int _scope)
 {
-    PrintShellCall("SetRepeatBlock", Boolean::keys[int(value)]);
-    if (value) { stack.SetState(BlockState::BLOCK_REPEATING, current_scope); }
-    else       { stack.SetState(BlockState::BLOCK_COMPUTING, current_scope); }
-    stack.SetRepeatBlock(value, current_scope);
+    PrintShellCall("SetRepeatBlock", Boolean::alias[int(value)]+" @ "+std::to_string(_scope));
+    if (value) { stack.SetState(BlockState::BLOCK_REPEATING, _scope); }
+    else       { stack.SetState(BlockState::BLOCK_COMPUTING, _scope); }
+    stack.SetRepeatBlock(value, _scope);
 }
 
 void Shell::SetExpectingBlock(std::string state)
@@ -270,124 +408,3 @@ bool Shell::IsStringDecimal(std::string text)
     if (text.size()>1 && text.at(0)=='0' && decimal_index!=1) { return false; }
     return is_valid;
 }
-
-
-
-void Shell::PrintTokens(std::vector<Token> tokens)
-{
-    //std::cout << "----------------------------------------------------------------" << std::endl;
-    for (int i=0; i<int(tokens.size()); i++)
-    {
-        std::cout << "(" << tokens[i].GetValue() << ") Type[";
-        std::cout << SyntaxType::keys[tokens[i].GetType()] << "] Name[";
-        std::cout << tokens[i].GetName() << "] @ Index:";
-        std::cout << tokens[i].GetIndex() << std::endl;
-    }
-    std::cout << std::endl;
-    //std::cout << "----------------------------------------------------------------" << std::endl;
-}
-
-void Shell::PrintInstructions(std::vector<Instruction> instructions)
-{
-    for (int i=0; i<int(instructions.size()); i++)
-    {
-        std::cout << "State:" << instructions.at(i).GetState();
-        std::cout << " Type:" << ReturnType::keys[instructions.at(i).GetType()];
-        std::cout << " Args:" << instructions.at(i).GetArgC();
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
-///*
-void Shell::PrintState()
-{
-    std::cout << GetColorString("================================================================", 0, 128, 128) << std::endl;
-    std::cout << GetColorString("==================== - Shell State Summary - ===================", 0, 128, 128) << std::endl;
-    std::cout << GetColorString("================================================================", 0, 128, 128) << std::endl;
-    std::vector<Token> stack_vars = stack.GetVariables(current_scope);
-    std::vector<Instruction> stack_calls = stack.GetInstructions(current_scope);
-    const int S = stack.GetBlockSize(current_scope);
-
-    std::cout << "Scope:" << current_scope;
-    std::cout << " Instruction:" << stack.GetInstructionIndex();
-    std::cout << "/" << stack.GetSize(current_scope);
-    std::cout << " Block:" << stack.GetBlockIndex(current_scope);
-    std::cout << "/" << S;
-    std::cout << " Variables:"<< stack_vars.size();
-    std::cout << " State:" << BlockState::keys[stack.GetState(current_scope)];
-    std::cout << std::endl;
-    PrintTokens(stack_vars);
-    PrintInstructions(stack_calls);
-    if (S>0)
-    {
-        std::vector<Block> blocks = stack.GetBlocks(current_scope);
-        for (int i=0; i<S; i++)
-        {
-            int _scope = blocks.at(i).GetScope(current_scope);
-            std::vector<Token> _stack_vars = blocks.at(i).GetVariables(_scope);
-            std::vector<Instruction> _stack_calls = stack.GetInstructions(_scope);
-            std::cout << "    Scope:" << _scope;
-            std::cout << " Instruction:" << blocks.at(i).GetInstructionIndex();
-            std::cout << "/" << blocks.at(i).GetSize(_scope);
-            std::cout << " Block:" << blocks.at(i).GetBlockIndex(_scope);
-            std::cout << "/" << blocks.at(i).GetBlockSize(_scope);
-            std::cout << " Variables:"<< _stack_vars.size();
-            std::cout << " State:" << BlockState::keys[blocks.at(i).GetState(_scope)];
-            std::cout << std::endl;
-            PrintTokens(_stack_vars);
-            PrintInstructions(_stack_calls);
-        }
-    }
-}
-//*/
-/*
-void Shell::PrintState()
-{
-    const int SCOPE = 0;
-    std::cout << "================================================================" << std::endl;
-    std::cout << "==================== - Shell State Summary - ===================" << std::endl;
-    std::cout << "================================================================" << std::endl;
-    std::vector<Block> blocks = stack.GetBlocks(SCOPE);
-    std::vector<Token> stack_vars = stack.GetVariables(SCOPE);
-    std::vector<Instruction> stack_calls = stack.GetInstructions(SCOPE);
-    const int S = blocks.size();
-
-    std::cout << "Scope:" << SCOPE;
-    std::cout << " Instruction:" << stack.GetInstructionIndex();
-    std::cout << "/" << stack.GetSize(SCOPE);
-    std::cout << " Block:" << stack.GetBlockIndex(SCOPE);
-    std::cout << "/" << S;
-    std::cout << " Variables:"<< stack_vars.size();
-    std::cout << " State:" << BlockState::keys[stack.GetState(SCOPE)];
-    std::cout << std::endl;
-    // Print Variables
-    std::cout << "Variables: ";
-    for (int i=0; i<int(stack_vars.size()); i++)
-    {
-        Token var = stack_vars.at(i);
-        if (i>0) { std::cout<<", "; }
-        std::cout<<var.GetName()<<":"<<var.GetValue();
-    }
-    std::cout << std::endl;
-    // Print Calls
-    std::cout << "Calls: ";
-    for (int i=0; i<int(stack_calls.size()); i++)
-    {
-        Instruction call = stack_calls.at(i);
-        if (i>0) { std::cout<<", "; }
-        std::cout<<ReturnType::keys[call.GetType()]<<" "<<call.GetState()<<"(";
-        std::vector<Token> args = call.GetArguments();
-        for (int a=0; a<int(args.size()); a++)
-        {
-            Token arg = args.at(a);
-            if (a>0) { std::cout<<", "; }
-            std::cout<<arg.GetValue();
-            std::string name = arg.GetName();
-            if (name!="") { std::cout<<"("<<name<<")"; }
-        }
-        std::cout<<")";
-    }
-    std::cout << std::endl;
-
-}
-*/
