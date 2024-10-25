@@ -9,6 +9,7 @@ namespace SyntaxGlobal
 {
     extern std::string empty_block;
     extern std::string repeat_block;
+    extern std::string end_repeat_block;
 
     extern std::string blank_instruction;
     extern std::string unsolved_problem;

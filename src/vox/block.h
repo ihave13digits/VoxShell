@@ -14,7 +14,7 @@ class Block
 private:
 
     bool repeat_block = false;
-    int state=BlockState::BLOCK_WAITING, scope, block_index=0, instruction_index=0;
+    int state=BlockState::BLOCK_COMPUTING, scope, block_index=0, instruction_index=0;
     std::unordered_map<std::string, Token> variables;
     std::vector<Instruction> stack;
     std::vector<Block> blocks;
@@ -39,11 +39,12 @@ public:
     void SetScope(int new_scope, int _scope);
 
     int GetBlockIndex(int _scope);
-    void SetBlockIndex(int _block_index);
+    void SetBlockIndex(int _block_index, int _scope);
 
-    int GetInstructionIndex();
-    void SetInstructionIndex(int _instruction_index);
+    int GetInstructionIndex(int _scope);
+    void SetInstructionIndex(int _instruction_index, int _scope);
 
+    //void EraseFront(int _scope);
     void PopFront(int _scope);
     void PushBack(Instruction instruction, int _scope);
 

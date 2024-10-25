@@ -148,64 +148,53 @@ std::vector<Token> ExecuteFor(Instruction instruction)
         std::string value = replace.GetValue();
         if      (replace.GetType()==SyntaxType::TYPE_INTEGER)
         {
-            if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]       )
+            int v = std::stoi(value);
+            if      (comp.GetType()==SyntaxType::TYPE_INTEGER)
             {
-                int v = std::stoi(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v< std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v< std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                int c = std::stoi(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
             }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]      )
+            else if (comp.GetType()==SyntaxType::TYPE_DECIMAL)
             {
-                int v = std::stoi(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v> std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v> std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL] )
-            {
-                int v = std::stoi(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v<=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v<=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL])
-            {
-                int v = std::stoi(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v>=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v>=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                float c = std::stof(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
             }
         }
         else if (replace.GetType()==SyntaxType::TYPE_DECIMAL)
         {
-            if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]       )
+            int v = std::stof(value);
+            if      (comp.GetType()==SyntaxType::TYPE_INTEGER)
             {
-                float v = std::stof(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v< std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v< std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                int c = std::stoi(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
             }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]      )
+            else if (comp.GetType()==SyntaxType::TYPE_DECIMAL)
             {
-                float v = std::stof(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v> std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v> std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL] )
-            {
-                float v = std::stof(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v<=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v<=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL])
-            {
-                float v = std::stof(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v>=std::stoi(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v>=std::stof(comp.GetValue())) { replace.SetValue(value); shell.SetVariable(var_name, replace); loop=true; } }
+                float c = std::stof(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); shell.SetVariable(var_name, replace); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); shell.SetVariable(var_name, replace); loop=true; }
             }
         }
     }
     if (loop)
     {
-        shell.SetExpectingBlock(SyntaxGlobal::repeat_block);
+        shell.SetExpectingBlock(SyntaxGlobal::repeat_block, shell.GetInstructionIndex());
     }
-    shell.PrintTokens({Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(loop), "")});
+    else
+    {
+        shell.SetExpectingBlock(SyntaxGlobal::end_repeat_block, -1);
+    }
     return {Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(loop), "")};
 }
 

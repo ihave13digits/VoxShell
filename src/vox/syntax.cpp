@@ -2,6 +2,7 @@
 
 std::string SyntaxGlobal::empty_block = "__BlockIsEmpty__";
 std::string SyntaxGlobal::repeat_block = "__RepeatBlock__";
+std::string SyntaxGlobal::end_repeat_block = "__EndRepeatBlock__";
 
 std::string SyntaxGlobal::blank_instruction = "__InstructionIsBlank__";
 std::string SyntaxGlobal::unsolved_problem = "__UnsolvedProblem__";

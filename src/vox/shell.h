@@ -19,6 +19,7 @@ class Shell
 private:
 
     std::string call_expecting_block = "";
+    int call_expecting_index = -1;
     bool step_parsing = false;
     bool output_debug = false;
     bool user_engaged = true;
@@ -47,7 +48,7 @@ public:
 
     bool GetRepeatBlock();
     void SetRepeatBlock(bool value, int _scope);
-    void SetExpectingBlock(std::string state);
+    void SetExpectingBlock(std::string state, int index);
 
     bool VariableExists(std::string name);
     void DeleteVariable(std::string name);
@@ -58,6 +59,9 @@ public:
     Block GetStack();
     int GetStackLimit();
     void SetStackLimit(int _stack_limit);
+
+    int GetInstructionIndex();
+    void SetInstructionIndex(int index);
 
     int GetScope();
     void SetScope(int _scope);

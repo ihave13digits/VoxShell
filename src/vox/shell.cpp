@@ -75,7 +75,7 @@ void Shell::PrintState()
     const int S = stack.GetBlockSize(current_scope);
 
     std::cout << GetColorString("Scope:",128,0,255) << GetColorString(std::to_string(current_scope), 255,255,255);
-    std::cout << GetColorString(" Instruction:",128,0,255) << GetColorString(std::to_string(stack.GetInstructionIndex()), 255,255,255);
+    std::cout << GetColorString(" Instruction:",128,0,255) << GetColorString(std::to_string(stack.GetInstructionIndex(current_scope)), 255,255,255);
     std::cout << GetColorString("/"+std::to_string(stack.GetSize(current_scope)), 255,255,255);
     std::cout << GetColorString(" Block:",128,0,255) << GetColorString(std::to_string(stack.GetBlockIndex(current_scope)), 255,255,255);
     std::cout << GetColorString("/"+std::to_string(S), 255,255,255);
@@ -93,7 +93,7 @@ void Shell::PrintState()
             std::vector<Token> _stack_vars = blocks.at(i).GetVariables(_scope);
             std::vector<Instruction> _stack_calls = stack.GetInstructions(_scope);
             std::cout << GetColorString("    Scope:",128,0,255) << GetColorString(std::to_string(_scope), 255,255,255);
-            std::cout << GetColorString(" Instruction:",128,0,255) << GetColorString(std::to_string(blocks.at(i).GetInstructionIndex()), 255,255,255);
+            std::cout << GetColorString(" Instruction:",128,0,255) << GetColorString(std::to_string(blocks.at(i).GetInstructionIndex(_scope)), 255,255,255);
             std::cout << GetColorString("/"+std::to_string(blocks.at(i).GetSize(_scope)), 255,255,255);
             std::cout << GetColorString(" Block:",128,0,255) << GetColorString(std::to_string(blocks.at(i).GetBlockIndex(_scope)), 255,255,255);
             std::cout << GetColorString("/"+std::to_string(blocks.at(i).GetBlockSize(_scope)), 255,255,255);
@@ -197,17 +197,18 @@ void Shell::SetRepeatBlock(bool value, int _scope)
     stack.SetRepeatBlock(value, _scope);
 }
 
-void Shell::SetExpectingBlock(std::string state)
+void Shell::SetExpectingBlock(std::string state, int index)
 {
     PrintShellCall("SetExpectingBlock", state);
     call_expecting_block = state;
+    call_expecting_index = index;
 }
 
 
 
 bool Shell::VariableExists(std::string name)
 {
-    return (stack.VariableNameExists(name, 0));
+    return (stack.VariableNameExists(name, current_scope));
 }
 
 void Shell::DeleteVariable(std::string name)
@@ -250,6 +251,19 @@ void Shell::SetStackLimit(int _stack_limit)
 {
     PrintShellCall("SetStackLimit", std::to_string(_stack_limit));
     stack_limit = _stack_limit;
+}
+
+
+
+int Shell::GetInstructionIndex()
+{
+    return stack.GetInstructionIndex(current_scope);
+}
+
+void Shell::SetInstructionIndex(int index)
+{
+    PrintShellCall("SetInstructionIndex", std::to_string(index));
+    stack.SetInstructionIndex(index, current_scope);
 }
 
 

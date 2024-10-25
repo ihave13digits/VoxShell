@@ -11,23 +11,19 @@ std::vector<Token> Shell::ParseBlocks(std::vector<Token> tokens)
         if      (value==Syntax::keys[Syntax::SYNTAX_BLOCK_L])
         {
             PrintShellHint("ParseBlocks", "Starting Block");
+            stack.SetState(BlockState::BLOCK_WAITING, current_scope);
             stack.PushBlock(Block(current_scope+1, stack.GetBlockSize(current_scope)), current_scope);
             current_scope++;
             if (call_expecting_block!="")
             {
                 PrintShellHint("ParseBlocks", "Call Expecting Block ("+call_expecting_block+")");
-                // This Isn't Being Caqught At The Right Time
                 if (call_expecting_block==SyntaxGlobal::repeat_block) { SetRepeatBlock(true, current_scope); }
-                
+                else if (call_expecting_block==SyntaxGlobal::end_repeat_block) { SetRepeatBlock(false, -1); call_expecting_block = ""; }
             }
         }
         else if (value==Syntax::keys[Syntax::SYNTAX_BLOCK_R])
         {
-            if (call_expecting_block!="")
-            {
-                if (call_expecting_block==SyntaxGlobal::repeat_block) { SetRepeatBlock(false, current_scope); call_expecting_block = ""; }
-                
-            }
+            stack.SetState(BlockState::BLOCK_COMPUTING, current_scope);
             PrintShellHint("ParseBlocks", "Ending Block");
             current_scope--;
         }
@@ -79,7 +75,7 @@ std::vector<Token> Shell::ParseVariables(std::vector<Token> tokens)
         if (token.GetType()==SyntaxType::TYPE_UNKNOWN && VariableExists(token.GetValue()))
         {
             PrintShellHint("ParseVariables", "Variable Found");
-            condensed.push_back(stack.GetVariable(token.GetValue(), 0));
+            condensed.push_back(stack.GetVariable(token.GetValue(), current_scope));
         }
         else { condensed.push_back(token); }
     }
@@ -332,7 +328,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
                 else { PrintShellHint("ParseEquals", "[Reset] Unsolved Problem"); computing=false; break; }
             }
         }
-        else { PrintShellHint("ParseEquals", "No Operation"); computing=false; break; }
+        else { computing=false; break; }
         //PrintTokens(condensed);
     }
     for (int i=0; i<int(condensed.size()); i++)
@@ -513,7 +509,7 @@ void Shell::Evaluate()
     {
         if (step_parsing) { std::string line = ""; std::getline(std::cin, line); if (line=="x") { ForceExit("User Quit"); break; } }
         //std::cout<<"----------------"<<std::endl;
-        //PrintState();//PrintTokens(instruction.GetArguments());
+        PrintState();//PrintTokens(instruction.GetArguments());
         Instruction instruction = stack.GetNextInstruction(current_scope);
         if (instruction.GetState()!=SyntaxGlobal::empty_block)
         {
