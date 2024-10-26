@@ -34,22 +34,9 @@ void Run()
 
 int main(int argc, char *argv[])
 {
-    // Standard Library
-    Vox::shell.RegisterFunction("delete",    Generic::Function(-1, ReturnType::RETURN_VOID, VoxStandard::ExecuteDelete));
-    Vox::shell.RegisterFunction("echo",      Generic::Function(-1, ReturnType::RETURN_VOID, VoxStandard::ExecuteEcho));
-    Vox::shell.RegisterFunction("echi",      Generic::Function(-1, ReturnType::RETURN_STRING, VoxStandard::ExecuteEchi));
-    Vox::shell.RegisterFunction("eval",      Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteEval));
-    Vox::shell.RegisterFunction("exit",      Generic::Function( 0, ReturnType::RETURN_VOID, VoxStandard::ExecuteExit));
-    Vox::shell.RegisterFunction("for",       Generic::Function( 3, ReturnType::RETURN_VOID, VoxStandard::ExecuteFor));
-    Vox::shell.RegisterFunction("if",        Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteIf));
-    Vox::shell.RegisterFunction("include",   Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteInclude));
-    Vox::shell.RegisterFunction("to_string", Generic::Function( 1, ReturnType::RETURN_STRING, VoxStandard::ExecuteToString));
-    // Math Library
-    Vox::shell.RegisterFunction("seed",      Generic::Function( 1, ReturnType::RETURN_VOID, VoxMath::ExecuteSeedRandom));
-    Vox::shell.RegisterFunction("rand",      Generic::Function( 0, ReturnType::RETURN_INTEGER, VoxMath::ExecuteRandom));
-    Vox::shell.RegisterFunction("cos",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteCos));
-    Vox::shell.RegisterFunction("sin",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteSin));
-    Vox::shell.RegisterFunction("tan",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteTan));
+    // Register Libraries
+    Vox::shell.RegisterLibrary(VoxStandard::functions);
+    Vox::shell.RegisterLibrary(VoxMath::functions);
     if (argc>1)
     {
         Eval(argc, argv);

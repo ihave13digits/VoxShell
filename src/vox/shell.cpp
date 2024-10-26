@@ -165,6 +165,14 @@ void Shell::RegisterFunction(std::string name, Generic::Function f)
     else { std::cout << SyntaxGlobal::function_exists << std::endl; }
 }
 
+void Shell::RegisterLibrary(std::map<std::string, Generic::Function> _functions)
+{
+    for (auto f : _functions)
+    {
+        RegisterFunction(f.first, f.second);
+    }
+}
+
 
 
 bool Shell::IsBreakPoint(std::string character)

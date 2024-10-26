@@ -58,6 +58,7 @@ public:
     bool FunctionReturns(std::string name);
     bool HasFunction(std::vector<Token> tokens);
     void RegisterFunction(std::string name, Generic::Function f);
+    void RegisterLibrary(std::map<std::string, Generic::Function> _functions);
 
     bool IsBreakPoint(std::string character);
     int GetTokenType(std::string segment);

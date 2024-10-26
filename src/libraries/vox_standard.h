@@ -12,6 +12,9 @@
 
 namespace VoxStandard
 {
+
+    extern std::map<std::string, Generic::Function> functions;
+
     std::vector<Token> ExecuteDelete(Instruction instruction);
     std::vector<Token> ExecuteEcho(Instruction instruction);
     std::vector<Token> ExecuteEchi(Instruction instruction);
@@ -21,6 +24,7 @@ namespace VoxStandard
     std::vector<Token> ExecuteIf(Instruction instruction);
     std::vector<Token> ExecuteInclude(Instruction instruction);
     std::vector<Token> ExecuteToString(Instruction instruction);
+
 }
 
 #endif // VOX_LIB_STANDARD_H

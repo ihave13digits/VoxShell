@@ -1,5 +1,18 @@
 #include "vox_standard.h"
 
+std::map<std::string, Generic::Function> VoxStandard::functions =
+{
+    {"delete",    Generic::Function(-1, ReturnType::RETURN_VOID, VoxStandard::ExecuteDelete)},
+    {"echo",      Generic::Function(-1, ReturnType::RETURN_VOID, VoxStandard::ExecuteEcho)},
+    {"echi",      Generic::Function(-1, ReturnType::RETURN_STRING, VoxStandard::ExecuteEchi)},
+    {"eval",      Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteEval)},
+    {"exit",      Generic::Function( 0, ReturnType::RETURN_VOID, VoxStandard::ExecuteExit)},
+    {"for",       Generic::Function( 3, ReturnType::RETURN_VOID, VoxStandard::ExecuteFor)},
+    {"if",        Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteIf)},
+    {"include",   Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteInclude)},
+    {"to_string", Generic::Function( 1, ReturnType::RETURN_STRING, VoxStandard::ExecuteToString)},
+};
+
 std::vector<Token> VoxStandard::ExecuteDelete(Instruction instruction)
 {
     const int S = instruction.GetArguments().size();
