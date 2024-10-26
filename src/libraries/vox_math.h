@@ -36,11 +36,16 @@ namespace VoxMath
 
     std::vector<Token> ExecuteExp(Instruction instruction);
     std::vector<Token> ExecuteLog(Instruction instruction);
+    std::vector<Token> ExecutePow(Instruction instruction);
     std::vector<Token> ExecuteSqrt(Instruction instruction);
     std::vector<Token> ExecuteCbrt(Instruction instruction);
 
+    std::vector<Token> ExecuteAbs(Instruction instruction);
     std::vector<Token> ExecuteCeil(Instruction instruction);
     std::vector<Token> ExecuteFloor(Instruction instruction);
+    std::vector<Token> ExecuteFmod(Instruction instruction);
+    std::vector<Token> ExecuteMax(Instruction instruction);
+    std::vector<Token> ExecuteMin(Instruction instruction);
 
 }
 

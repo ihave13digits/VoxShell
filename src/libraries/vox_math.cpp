@@ -22,11 +22,16 @@ std::map<std::string, Generic::Function> VoxMath::functions =
     
     {"exp",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteExp)},
     {"log",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteLog)},
+    {"pow",       Generic::Function( 2, ReturnType::RETURN_DECIMAL, VoxMath::ExecutePow)},
     {"sqrt",      Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteSqrt)},
     {"cbrt",      Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteCbrt)},
     
+    {"abs",       Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteAbs)},
     {"ceil",      Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteCeil)},
     {"floor",     Generic::Function( 1, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteFloor)},
+    {"fmod",      Generic::Function( 2, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteFmod)},
+    {"max",       Generic::Function( 2, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteMax)},
+    {"min",       Generic::Function( 2, ReturnType::RETURN_DECIMAL, VoxMath::ExecuteMin)},
 };
 
 std::vector<Token> VoxMath::ExecuteSeedRandom(Instruction instruction)
@@ -202,6 +207,20 @@ std::vector<Token> VoxMath::ExecuteLog(Instruction instruction)
     return {Token(token.GetIndex(), SyntaxType::TYPE_DECIMAL, std::to_string(log_value))};
 }
 
+std::vector<Token> VoxMath::ExecutePow(Instruction instruction)
+{
+    Token token1 = instruction.GetArgument(0);
+    Token token2 = instruction.GetArgument(0);
+    float value1 = 0.0;
+    float value2 = 0.0;
+    if      (token1.GetType()==SyntaxType::TYPE_INTEGER) { value1 = float(std::stoi(token1.GetValue())); }
+    else if (token1.GetType()==SyntaxType::TYPE_DECIMAL) { value1 = std::stof(token1.GetValue()); }
+    if      (token2.GetType()==SyntaxType::TYPE_INTEGER) { value2 = float(std::stoi(token2.GetValue())); }
+    else if (token2.GetType()==SyntaxType::TYPE_DECIMAL) { value2 = std::stof(token2.GetValue()); }
+    float pow_value = pow(value1, value2);
+    return {Token(token1.GetIndex(), SyntaxType::TYPE_DECIMAL, std::to_string(pow_value))};
+}
+
 std::vector<Token> VoxMath::ExecuteSqrt(Instruction instruction)
 {
     Token token = instruction.GetArgument(0);
@@ -224,6 +243,16 @@ std::vector<Token> VoxMath::ExecuteCbrt(Instruction instruction)
 
 
 
+std::vector<Token> VoxMath::ExecuteAbs(Instruction instruction)
+{
+    Token token = instruction.GetArgument(0);
+    float value = 0.0;
+    if      (token.GetType()==SyntaxType::TYPE_INTEGER) { value = float(std::stoi(token.GetValue())); }
+    else if (token.GetType()==SyntaxType::TYPE_DECIMAL) { value = std::stof(token.GetValue()); }
+    float abs_value = abs(value);
+    return {Token(token.GetIndex(), SyntaxType::TYPE_DECIMAL, std::to_string(abs_value))};
+}
+
 std::vector<Token> VoxMath::ExecuteCeil(Instruction instruction)
 {
     Token token = instruction.GetArgument(0);
@@ -242,4 +271,46 @@ std::vector<Token> VoxMath::ExecuteFloor(Instruction instruction)
     else if (token.GetType()==SyntaxType::TYPE_DECIMAL) { value = std::stof(token.GetValue()); }
     float floor_value = floor(value);
     return {Token(token.GetIndex(), SyntaxType::TYPE_DECIMAL, std::to_string(floor_value))};
+}
+
+std::vector<Token> VoxMath::ExecuteFmod(Instruction instruction)
+{
+    Token token1 = instruction.GetArgument(0);
+    Token token2 = instruction.GetArgument(1);
+    float value1 = 0.0;
+    float value2 = 0.0;
+    if      (token1.GetType()==SyntaxType::TYPE_INTEGER) { value1 = float(std::stoi(token1.GetValue())); }
+    else if (token1.GetType()==SyntaxType::TYPE_DECIMAL) { value1 = std::stof(token1.GetValue()); }
+    if      (token2.GetType()==SyntaxType::TYPE_INTEGER) { value2 = float(std::stoi(token2.GetValue())); }
+    else if (token2.GetType()==SyntaxType::TYPE_DECIMAL) { value2 = std::stof(token2.GetValue()); }
+    float fmod_value = fmod(value1, value2);
+    return {Token(token1.GetIndex(), SyntaxType::TYPE_DECIMAL, std::to_string(fmod_value))};
+}
+
+std::vector<Token> VoxMath::ExecuteMax(Instruction instruction)
+{
+    Token token1 = instruction.GetArgument(0);
+    Token token2 = instruction.GetArgument(1);
+    float value1 = 0.0;
+    float value2 = 0.0;
+    if      (token1.GetType()==SyntaxType::TYPE_INTEGER) { value1 = float(std::stoi(token1.GetValue())); }
+    else if (token1.GetType()==SyntaxType::TYPE_DECIMAL) { value1 = std::stof(token1.GetValue()); }
+    if      (token2.GetType()==SyntaxType::TYPE_INTEGER) { value2 = float(std::stoi(token2.GetValue())); }
+    else if (token2.GetType()==SyntaxType::TYPE_DECIMAL) { value2 = std::stof(token2.GetValue()); }
+    float fmax_value = fmax(value1, value2);
+    return {Token(token1.GetIndex(), SyntaxType::TYPE_DECIMAL, std::to_string(fmax_value))};
+}
+
+std::vector<Token> VoxMath::ExecuteMin(Instruction instruction)
+{
+    Token token1 = instruction.GetArgument(0);
+    Token token2 = instruction.GetArgument(1);
+    float value1 = 0.0;
+    float value2 = 0.0;
+    if      (token1.GetType()==SyntaxType::TYPE_INTEGER) { value1 = float(std::stoi(token1.GetValue())); }
+    else if (token1.GetType()==SyntaxType::TYPE_DECIMAL) { value1 = std::stof(token1.GetValue()); }
+    if      (token2.GetType()==SyntaxType::TYPE_INTEGER) { value2 = float(std::stoi(token2.GetValue())); }
+    else if (token2.GetType()==SyntaxType::TYPE_DECIMAL) { value2 = std::stof(token2.GetValue()); }
+    float fmin_value = fmin(value1, value2);
+    return {Token(token1.GetIndex(), SyntaxType::TYPE_DECIMAL, std::to_string(fmin_value))};
 }
