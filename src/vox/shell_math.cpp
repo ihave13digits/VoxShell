@@ -485,6 +485,7 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
             Token solved;
             bool L=false, R=false;
             if (operation_index>0) { L=CanComputeToken(condensed[left_index]); } if (operation_index<int(condensed.size()-1)) { R=CanComputeToken(condensed.at(right_index)); }
+            // Normal Problem
             if (L==true && R==true)
             {
                 solved = SolveMath(condensed.at(left_index), condensed.at(right_index), condensed.at(operation_index));
@@ -498,6 +499,7 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
                 }
                 else { math_state++; if (math_state>MathState::MATH_LOG) { computing = false; break; } }
             }
+            // Unary Problem
             else if (R==true)
             {
                 solved = SolveUnary(condensed.at(right_index), condensed.at(operation_index));
@@ -511,6 +513,7 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
                 }
                 else { math_state++; if (math_state>MathState::MATH_LOG) { computing = false; break; } }
             }
+            // Logic Problem
             else
             {
                 if (operation_index<int(condensed.size()-1))
