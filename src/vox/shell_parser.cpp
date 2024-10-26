@@ -3,6 +3,7 @@
 
 std::vector<Token> Shell::ParseBlocks(std::vector<Token> tokens)
 {
+    PrintShellCall("ParseBlocks", "");
     std::vector<Token> condensed;
     for (int i=0; i<int(tokens.size()); i++)
     {
@@ -26,6 +27,7 @@ std::vector<Token> Shell::ParseBlocks(std::vector<Token> tokens)
 
 std::vector<Token> Shell::ParseQuotes(std::vector<Token> tokens)
 {
+    PrintShellCall("ParseQuotes", "");
     std::vector<Token> condensed;
     for (int i=0; i<int(tokens.size()); i++)
     {
@@ -56,6 +58,7 @@ std::vector<Token> Shell::ParseQuotes(std::vector<Token> tokens)
 
 std::vector<Token> Shell::ParseVariables(std::vector<Token> tokens)
 {
+    PrintShellCall("ParseVariables", "");
     std::vector<Token> condensed;
     for (int i=0; i<int(tokens.size()); i++)
     {
@@ -83,6 +86,7 @@ inline int Shell::FirstEqualsIndex(std::vector<Token> tokens)
 
 Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
 {
+    PrintShellCall("SolveEquals", "");
     Token v_name=tokens.at(operation_index-1), v_value=tokens.at(operation_index+1), v_type;
     if (operation_index>1) { v_type = tokens.at(operation_index-2); }
     Token solved = Token(v_name.GetIndex(), v_value.GetType(), v_value.GetValue(), SyntaxGlobal::unsolved_problem);
@@ -215,13 +219,10 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
                     return Token(token_index, fr.at(0).GetType(), fr.at(0).GetValue(), var_name);
                 }
             }
-            /*
             else
             {
-                std::cout<<"EqualsError.  Tokens:"<<std::endl;
-                PrintTokens(tokens);
+                PrintShellWarning("Couldn't Parse Variable");
             }
-            */
         }
         else
         {
@@ -265,13 +266,6 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
                     return Token(token_index, fr.at(0).GetType(), fr.at(0).GetValue(), v_name.GetName());
                 }
             }
-            /*
-            else
-            {
-                std::cout<<"EqualsError.  Tokens:"<<std::endl;
-                PrintTokens(tokens);
-            }
-            */
         }
     }
     return solved;
@@ -279,6 +273,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
 
 std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
 {
+    PrintShellCall("ParseEquals", "");
     std::vector<Token> condensed = tokens;
     bool computing = true;
     if (condensed.size()>4) { condensed = ParseMath(condensed); }
@@ -288,6 +283,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
         int operation_index=FirstEqualsIndex(condensed);
         if (operation_index>-1)
         {
+            // Initially Setting The Variable
             if (operation_index==2 && operation_index+1<int(condensed.size()))
             {
                 Token solved = SolveEquals(operation_index, condensed);
@@ -301,6 +297,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
                 }
                 else { computing=false; break; }
             }
+            // Resetting The Variable
             else if (operation_index==1 && operation_index+1<int(condensed.size()))
             {
                 Token solved = SolveEquals(operation_index, condensed);
@@ -333,4 +330,172 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
     }
     //PrintTokens(condensed);
     return condensed;
+}
+
+
+
+Token Shell::TokenizeSegment(std::string segment, int index)
+{
+    //PrintShellCall("TokenizeSegment", segment+" ("+std::to_string(index)+")");
+    int type = GetTokenType(segment);
+    return Token(index, type, segment);
+}
+
+std::vector<Token> Shell::TokenizeLine(std::string line)
+{
+    PrintShellCall("TokenizeLine", line);
+    std::vector<Token> tokens;
+    std::string segment = "";
+    int index = 0;
+    if (line.substr(line.size()-1, 1)!=Syntax::keys[Syntax::SYNTAX_END]) { line = line+Syntax::keys[Syntax::SYNTAX_END]; }// Ensures All Data Is Gathered
+    for (int i=0; i<int(line.size()); i++)
+    {
+        std::string character = line.substr(i, 1);
+        bool break_point = IsBreakPoint(character);
+        // Syntax Told It To Pop Segment
+        if (break_point)
+        {
+            Token token = TokenizeSegment(segment, index);
+            if (token.GetType()!=SyntaxType::TYPE_INVALID) { tokens.push_back(token); }
+            segment = "";
+            // Gather Break Key As Separate Token
+            segment += character;
+            Token _token = TokenizeSegment(segment, i);
+            if (_token.GetType()!=SyntaxType::TYPE_INVALID) { tokens.push_back(_token); }
+            segment = "";
+            index = i+1;
+        }
+        else { segment += character; }
+    }
+    //PrintTokens(tokens);
+    return tokens;
+}
+
+
+
+void Shell::ParseLine(std::string line)
+{
+    PrintShellCall("ParseLine", line);
+    if (line.size()==0) { return; }
+    std::vector<Token> tokens = TokenizeLine(line);
+    std::vector<Instruction> instructions = GenerateInstructions(tokens);
+    for (int i=0; i<int(instructions.size()); i++)
+    {
+        stack.PushBack(instructions[i]);
+    }
+}
+
+void Shell::ParseScript(Script script)
+{
+    PrintShellCall("ParseScript", script.GetName());
+    std::vector<Token> tokens;
+    std::vector<std::string> lines = script.GetLines();
+    for (int i=0; i<int(lines.size()); i++)
+    {
+        if (stack.GetSize()<stack_limit)
+        {
+            ParseLine(lines[i]);
+        }
+        else { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
+    }
+}
+
+std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
+{
+    PrintShellCall("GenerateInstructions", "");
+    //std::cout <<"FirstPass:"<<std::endl;
+    //PrintState();
+    //PrintTokens(tokens);
+    //tokens = ParseBlocks(tokens);
+    tokens = ParseQuotes(tokens);
+    tokens = ParseVariables(tokens);
+    std::vector<Instruction> instructions;
+    std::string state = "";
+    bool computing = true;
+    //std::cout <<"SecondPass:"<<std::endl;
+    while (computing)
+    {
+        //PrintTokens(tokens);
+        std::string state = "";
+        int call_index=-1, left_index=-1, right_index=-1;
+        for (int i=0; i<int(tokens.size()); i++)
+        {
+            std::string value = tokens.at(i).GetValue();
+            if (value==Operator::keys[Operator::OPERATOR_PAR_L]) { left_index = i; }
+            else if (value==Operator::keys[Operator::OPERATOR_PAR_R]) { right_index = i; break; }
+            else if (FunctionExists(value)) { state = "Function"; call_index = i; }
+            else if (value==Syntax::keys[Syntax::SYNTAX_END]) { break; }
+        }
+        if (state=="Function" && (call_index>-1 && left_index>call_index && right_index>left_index))
+        {
+            std::vector<Token> _tokens;
+            std::string call_name = tokens.at(call_index).GetValue();
+            for (int i=call_index; i<right_index; i++)
+            {
+                std::string value = tokens.at(left_index).GetValue();
+                if (value==Operator::keys[Syntax::SYNTAX_COMMA])
+                {
+                    _tokens.push_back(tokens.at(left_index));
+                }
+                if (value!=Operator::keys[Operator::OPERATOR_PAR_L] && value!=Operator::keys[Operator::OPERATOR_PAR_R])
+                {
+                    _tokens.push_back(tokens.at(left_index));
+                }
+                tokens.erase(tokens.begin()+call_index);
+            }
+            tokens.erase(tokens.begin()+call_index);
+            int argc = functions[call_name].GetArgumentCount();
+            while(int(_tokens.size())>argc)
+            {
+                const int S = _tokens.size();
+                _tokens = ParseEquals(_tokens); //if (int(_tokens.size())==S) { break; }
+                _tokens = ParseMath(_tokens); if (int(_tokens.size())==S) { break; }
+            }
+            if (functions[call_name].GetReturnType()!=ReturnType::RETURN_VOID)
+            {
+                Instruction instruction = Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens);
+                tokens.insert(tokens.begin()+call_index, functions[call_name].Call(instruction).at(0));
+            }
+            else
+            {
+                instructions.push_back(Instruction(functions[call_name].GetReturnType(), functions[call_name].GetArgumentCount(), call_name, _tokens));
+            }
+        }
+        else
+        {
+            computing = false; break;
+        }
+        //PrintTokens(tokens);
+    }
+    //std::cout <<"Residual:"<<std::endl; PrintTokens(tokens);
+    while(int(tokens.size())>1)
+    {
+        const int S = tokens.size();
+        tokens = ParseEquals(tokens);
+        tokens = ParseMath(tokens);
+        if (int(tokens.size())==S) { break; }
+    }
+    return instructions;
+}
+
+void Shell::Evaluate(std::string line)
+{
+    PrintShellCall("Evaluate", line);
+    int callback_count = 0;
+    std::string separator = GetColorString("----------------------------------------------------------------", 0,128,128);
+    std::cout << separator << std::endl;
+    ParseLine(line);
+    while (stack.GetSize()>0)
+    {
+        if (!IsUserEngaged()) { ClearStack(); break; }
+        Instruction instruction = stack.GetNextInstruction();
+        //PrintTokens(instruction.GetArguments());
+        functions[instruction.GetState()].Call(instruction);
+        stack.PopFront();
+        if (callback_count>stack_limit) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
+        callback_count++;
+    }
+    std::cout << separator << std::endl;
+    PrintState();
+    std::cout << separator << std::endl;
 }

@@ -19,6 +19,9 @@ class Shell
 private:
 
     bool user_engaged = true;
+    bool output_warnings = true;
+    bool output_errors = true;
+    bool output_calls = false;
     int stack_limit = 4096;
     int current_scope = 0;
     Block stack = Block(current_scope, 0);
@@ -29,6 +32,11 @@ private:
 public:
 
     Shell();
+
+    std::string GetColorString(std::string text, int R, int G, int B);
+    void PrintShellWarning(std::string text);
+    void PrintShellError(std::string text);
+    void PrintShellCall(std::string call, std::string text);
 
     bool IsUserEngaged();
     void SetUserEngaged(bool value);
