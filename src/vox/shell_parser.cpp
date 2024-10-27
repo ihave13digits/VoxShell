@@ -275,7 +275,9 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
 {
     PrintShellCall("ParseEquals", "");
     std::vector<Token> condensed = tokens;
-    bool computing = true;
+    int operation_index=FirstEqualsIndex(tokens);
+    bool has_operation = (operation_index>-1);
+    bool computing = has_operation;
     if (condensed.size()>4) { condensed = ParseMath(condensed); }
     while (computing)
     {
@@ -315,10 +317,12 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
         else { computing=false; break; }
         //PrintTokens(condensed);
     }
+    if (has_operation)
+    {
     for (int i=0; i<int(condensed.size()); i++)
     {
         std::string name = condensed.at(i).GetName();
-        if (name!="" && name!=SyntaxGlobal::unsolved_problem && !stack.VariableNameExists(name)) { PrintShellWarning("Pushing Variable"); PushVariable(condensed.at(i)); }
+        if (name!="" && name!=SyntaxGlobal::unsolved_problem) { PushVariable(condensed.at(i)); }
         /*else if (name==SyntaxGlobal::unsolved_problem)
         {
             std::cout<<"- ERROR START -"<<std::endl;
@@ -327,6 +331,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
             //stack.PushVariable(condensed.at(i));
         }
         */
+    }
     }
     //PrintTokens(condensed);
     return condensed;
