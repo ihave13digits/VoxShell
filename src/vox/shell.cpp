@@ -28,12 +28,13 @@ void Shell::PrintShellCall(std::string call, std::string text)
     if (output_calls)
     {
         const int R=0,G=255,B=64, _R=255,_G=255,_B=255, TR=64,TG=128,TB=0;
-        std::cout<<GetColorString("Shell",R,G,B);
-        std::cout<<GetColorString("::",_R,_G,_B);
-        std::cout<<GetColorString(call,R,G,B);
-        std::cout<<GetColorString("(",_R,_G,_B);
-        std::cout<<GetColorString(text,TR,TG,TB);
-        std::cout<<GetColorString(")",_R,_G,_B)<<std::endl;
+        std::cout << GetColorString("Shell",R,G,B)
+            << GetColorString("::",_R,_G,_B)
+            << GetColorString(call,R,G,B)
+            << GetColorString("(",_R,_G,_B)
+            << GetColorString(text,TR,TG,TB)
+            << GetColorString(")",_R,_G,_B)
+            << std::endl;
     }
 }
 
