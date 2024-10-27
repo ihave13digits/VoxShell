@@ -425,6 +425,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
         }
         else { computing=false; break; }
     }
+    // Finally, We Push The Variable/s
     if (has_operation)
     {
         for (int i=0; i<int(condensed.size()); i++)
@@ -474,7 +475,6 @@ std::vector<Token> Shell::TokenizeLine(std::string line)
         }
         else { segment += character; }
     }
-    //PrintTokens(tokens);
     return tokens;
 }
 
@@ -501,7 +501,8 @@ void Shell::ParseScript(Script script)
     {
         if (stack.GetSize()<stack_limit)
         {
-            ParseLine(lines[i]);
+            std::string line = lines.at(i);
+            if (line.size()>0) { ParseLine(line); }
         }
         else { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
     }
@@ -510,19 +511,14 @@ void Shell::ParseScript(Script script)
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
     PrintShellCall("GenerateInstructions", "");
-    //std::cout <<"FirstPass:"<<std::endl;
-    //PrintState();
-    //PrintTokens(tokens);
     //tokens = ParseBlocks(tokens);
     tokens = ParseQuotes(tokens);
     tokens = ParseVariables(tokens);
     std::vector<Instruction> instructions;
     std::string state = "";
     bool computing = true;
-    //std::cout <<"SecondPass:"<<std::endl;
     while (computing)
     {
-        //PrintTokens(tokens);
         std::string state = "";
         int call_index=-1, left_index=-1, right_index=-1;
         for (int i=0; i<int(tokens.size()); i++)
@@ -555,8 +551,9 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
             while(int(_tokens.size())>argc)
             {
                 const int S = _tokens.size();
-                _tokens = ParseEquals(_tokens); //if (int(_tokens.size())==S) { break; }
-                _tokens = ParseMath(_tokens); if (int(_tokens.size())==S) { break; }
+                if (FirstEqualsIndex(_tokens)>-1) { _tokens = ParseEquals(_tokens); }
+                if (HasOperation(_tokens)) { _tokens = ParseMath(_tokens); }
+                if (int(_tokens.size())==S) { break; }
             }
             if (functions[call_name].GetReturnType()!=ReturnType::RETURN_VOID)
             {
@@ -572,14 +569,12 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
         {
             computing = false; break;
         }
-        //PrintTokens(tokens);
     }
-    //std::cout <<"Residual:"<<std::endl; PrintTokens(tokens);
     while(int(tokens.size())>1)
     {
         const int S = tokens.size();
-        tokens = ParseEquals(tokens);
-        tokens = ParseMath(tokens);
+        if (FirstEqualsIndex(tokens)>-1) { tokens = ParseEquals(tokens); }
+        if (HasOperation(tokens)) { tokens = ParseMath(tokens); }
         if (int(tokens.size())==S) { break; }
     }
     return instructions;
@@ -588,6 +583,7 @@ std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 void Shell::Evaluate(std::string line)
 {
     PrintShellCall("Evaluate", line);
+    if (line.size()==0) { return; }
     int callback_count = 0;
     std::string separator = GetColorString("----------------------------------------------------------------", 0,128,128);
     std::cout << separator << std::endl;
