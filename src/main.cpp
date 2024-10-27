@@ -23,6 +23,7 @@ void Eval(int argc, char *argv[])
 
 void Run()
 {
+    // Only While VoxShell Is Active Will We Collect Input
     while (Vox::shell.IsUserEngaged())
     {
         // Collect User Input

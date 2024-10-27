@@ -130,7 +130,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
         }
         else if (type_value==ReturnType::keys[ReturnType::RETURN_INTEGER] && value_type==SyntaxType::TYPE_DECIMAL)
         {
-            return Token(token_index, value_type, std::to_string(int(std::stof(val_name))), var_name);
+            return Token(token_index, SyntaxType::TYPE_INTEGER, std::to_string(int(std::stof(val_name))), var_name);
         }
         else if (type_value==ReturnType::keys[ReturnType::RETURN_INTEGER] && value_type==SyntaxType::TYPE_BOOLEAN)
         {
@@ -147,7 +147,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
         }
         else if (type_value==ReturnType::keys[ReturnType::RETURN_DECIMAL] && value_type==SyntaxType::TYPE_INTEGER)
         {
-            return Token(token_index, value_type, std::to_string(float(std::stoi(val_name))), var_name);
+            return Token(token_index, SyntaxType::TYPE_DECIMAL, std::to_string(float(std::stoi(val_name))), var_name);
         }
         else if (type_value==ReturnType::keys[ReturnType::RETURN_DECIMAL] && value_type==SyntaxType::TYPE_BOOLEAN)
         {
@@ -193,10 +193,8 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     }
     else
     {
-        if (stack.VariableNameExists(var_name))
+        if (stack.VariableNameExists(var_name) && tokens.at(0).GetType()!=SyntaxType::TYPE_RETURN)
         {
-            PrintTokens(tokens); PrintShellError("Variable Already Exists");
-            /*
             Token compare = stack.GetVariable(var_name);
             // Handle.. Wait What?  They Match?!
             if (compare.GetType()==v_value.GetType())
@@ -283,13 +281,8 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             {
                 PrintShellWarning("Couldn't Parse Variable");
             }
-            */
         }
-        else if (stack.VariableNameExists(_var_name) && tokens.at(0).GetType()==SyntaxType::TYPE_RETURN)
-        {
-            PrintShellError("Variable Already Exists");
-        }
-        else
+        else if (stack.VariableNameExists(_var_name) && tokens.at(0).GetType()!=SyntaxType::TYPE_RETURN)
         {
             Token compare = stack.GetVariable(_var_name);
             // Handle.. Wait What?  They Match?!
@@ -327,7 +320,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             // Handle Integer
             else if (compare.GetType()==SyntaxType::TYPE_INTEGER && value_type==SyntaxType::TYPE_DECIMAL)
             {
-                return Token(token_index, value_type, std::to_string(int(std::stof(val_name))), _var_name);
+                return Token(token_index, SyntaxType::TYPE_INTEGER, std::to_string(int(std::stof(val_name))), _var_name);
             }
             else if (compare.GetType()==SyntaxType::TYPE_INTEGER && value_type==SyntaxType::TYPE_BOOLEAN)
             {
@@ -340,7 +333,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             // Handle Decimal
             else if (compare.GetType()==SyntaxType::TYPE_DECIMAL && value_type==SyntaxType::TYPE_INTEGER)
             {
-                return Token(token_index, value_type, std::to_string(float(std::stoi(val_name))), _var_name);
+                return Token(token_index, SyntaxType::TYPE_DECIMAL, std::to_string(float(std::stoi(val_name))), _var_name);
             }
             else if (compare.GetType()==SyntaxType::TYPE_DECIMAL && value_type==SyntaxType::TYPE_BOOLEAN)
             {
@@ -378,52 +371,10 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
                 PrintShellWarning("Couldn't Parse Variable");
             }
         }
-        /*
         else
         {
-            //PrintTokens(tokens);
-            //TODO: These Are ALL SUS!!!
-            // Handle Boolean
-            if (value_type==SyntaxType::TYPE_BOOLEAN)
-            {
-                std::string bool_value = val_name;
-                if      (bool_value==Boolean::alias[0]) { bool_value = Boolean::keys[0]; }
-                else if (bool_value==Boolean::alias[1]) { bool_value = Boolean::keys[1]; }
-                return Token(token_index, v_name.GetType(), bool_value, v_name.GetName());
-            }
-            // Handle Integer
-            else if (value_type==SyntaxType::TYPE_INTEGER)
-            {
-                return Token(token_index, value_type, val_name, v_name.GetName());
-            }
-            // Handle Decimal
-            else if (value_type==SyntaxType::TYPE_DECIMAL)
-            {
-                return Token(token_index, value_type, val_name, v_name.GetName());
-            }
-            // Handle String
-            else if (value_type==SyntaxType::TYPE_STRING)
-            {
-                return Token(token_index, value_type, val_name, v_name.GetName());
-            }
-            // Handle Variable
-            else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
-            {
-                Token compare = stack.GetVariable(val_name);
-                return Token(token_index, compare.GetType(), compare.GetValue(), val_name);
-            }
-            // Handle Function Returns
-            else if (HasFunction(tokens))
-            {
-                Instruction instruction = GenerateInstructions(tokens).at(0);
-                std::vector<Token> fr = functions[val_name].Call(instruction);
-                if (fr.size()>0)
-                {
-                    return Token(token_index, fr.at(0).GetType(), fr.at(0).GetValue(), v_name.GetName());
-                }
-            }
+            PrintShellError("Variable Already Exists");
         }
-        */
     }
     return solved;
 }
