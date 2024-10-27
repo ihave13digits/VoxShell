@@ -300,8 +300,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { int check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { int check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_INTEGER); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_INTEGER); }
             else if (op==Operator::keys[Operator::OPERATOR_AND])     { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])      { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
