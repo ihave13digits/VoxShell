@@ -92,9 +92,9 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     int value_type=v_value.GetType(), type_type=v_type.GetType();
     int token_index = v_name.GetIndex();
     std::string type_value=v_type.GetValue();
-    std::string val_name = v_value.GetValue(), var_name = v_name.GetValue();
+    std::string val_name = v_value.GetValue(), var_name = v_name.GetValue(), _var_name = v_name.GetName();
     Token solved = Token(token_index, value_type, val_name, SyntaxGlobal::unsolved_problem);
-    if (type_type==SyntaxType::TYPE_RETURN)
+    if (type_type==SyntaxType::TYPE_RETURN && !stack.VariableNameExists(var_name) && !stack.VariableNameExists(_var_name))
     {
         // Handle Boolean
         if (type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN)
@@ -195,6 +195,8 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     {
         if (stack.VariableNameExists(var_name))
         {
+            PrintTokens(tokens); PrintShellError("Variable Already Exists");
+            /*
             Token compare = stack.GetVariable(var_name);
             // Handle.. Wait What?  They Match?!
             if (compare.GetType()==v_value.GetType())
@@ -281,9 +283,105 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             {
                 PrintShellWarning("Couldn't Parse Variable");
             }
+            */
+        }
+        else if (stack.VariableNameExists(_var_name) && tokens.at(0).GetType()==SyntaxType::TYPE_RETURN)
+        {
+            PrintShellError("Variable Already Exists");
         }
         else
         {
+            Token compare = stack.GetVariable(_var_name);
+            // Handle.. Wait What?  They Match?!
+            if (compare.GetType()==v_value.GetType())
+            {
+                return Token(token_index, value_type, val_name, _var_name);
+            }
+            // Handle Boolean
+            else if (compare.GetType()==SyntaxType::TYPE_BOOLEAN && value_type==SyntaxType::TYPE_BOOLEAN)
+            {
+                std::string bool_value = val_name;
+                if      (bool_value==Boolean::alias[0]) { bool_value = Boolean::keys[0]; }
+                else if (bool_value==Boolean::alias[1]) { bool_value = Boolean::keys[1]; }
+                return Token(token_index, compare.GetType(), bool_value, compare.GetName());
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_BOOLEAN && value_type==SyntaxType::TYPE_INTEGER)
+            {
+                std::string bool_value = val_name;
+                int numeric_value = 0;
+                if      (bool_value==Boolean::alias[0]) { numeric_value = 0; }
+                else if (bool_value==Boolean::alias[1]) { numeric_value = 1; }
+                else if (IsStringInteger(bool_value)) { numeric_value = std::stoi(bool_value); }
+                if (numeric_value>1) { numeric_value=1; } else if (numeric_value<0) { numeric_value=0; }
+                bool_value=Boolean::keys[numeric_value];
+                return Token(token_index, compare.GetType(), bool_value, _var_name);
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_BOOLEAN && value_type==SyntaxType::TYPE_DECIMAL)
+            {
+                PrintShellError("Can't Assign Float Value To Boolean Type");
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_BOOLEAN && value_type==SyntaxType::TYPE_STRING)
+            {
+                PrintShellError("Can't Assign String Value To Boolean Type");
+            }
+            // Handle Integer
+            else if (compare.GetType()==SyntaxType::TYPE_INTEGER && value_type==SyntaxType::TYPE_DECIMAL)
+            {
+                return Token(token_index, value_type, std::to_string(int(std::stof(val_name))), _var_name);
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_INTEGER && value_type==SyntaxType::TYPE_BOOLEAN)
+            {
+                PrintShellError("Can't Assign Boolean Value To Integer Type");
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_INTEGER && value_type==SyntaxType::TYPE_STRING)
+            {
+                PrintShellError("Can't Assign String Value To Integer Type");
+            }
+            // Handle Decimal
+            else if (compare.GetType()==SyntaxType::TYPE_DECIMAL && value_type==SyntaxType::TYPE_INTEGER)
+            {
+                return Token(token_index, value_type, std::to_string(float(std::stoi(val_name))), _var_name);
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_DECIMAL && value_type==SyntaxType::TYPE_BOOLEAN)
+            {
+                PrintShellError("Can't Assign Boolean Value To Float Type");
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_DECIMAL && value_type==SyntaxType::TYPE_STRING)
+            {
+                PrintShellError("Can't Assign String Value To Float Type");
+            }
+            // Handle String
+            else if (compare.GetType()==SyntaxType::TYPE_STRING && value_type==SyntaxType::TYPE_BOOLEAN)
+            {
+                PrintShellError("Can't Assign Boolean Value To String Type");
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_STRING && value_type==SyntaxType::TYPE_INTEGER)
+            {
+                PrintShellError("Can't Assign Float Value To String Type");
+            }
+            else if (compare.GetType()==SyntaxType::TYPE_STRING && value_type==SyntaxType::TYPE_DECIMAL)
+            {
+                PrintShellError("Can't Assign Float Value To String Type");
+            }
+            // Handle Function Returns
+            else if (value_type==SyntaxType::TYPE_BUILT_IN && HasFunction(tokens))
+            {
+                Instruction instruction = GenerateInstructions(tokens).at(0);
+                std::vector<Token> fr = functions[val_name].Call(instruction);
+                if (fr.size()>0)
+                {
+                    return Token(token_index, fr.at(0).GetType(), fr.at(0).GetValue(), _var_name);
+                }
+            }
+            else
+            {
+                PrintShellWarning("Couldn't Parse Variable");
+            }
+        }
+        /*
+        else
+        {
+            //PrintTokens(tokens);
             //TODO: These Are ALL SUS!!!
             // Handle Boolean
             if (value_type==SyntaxType::TYPE_BOOLEAN)
@@ -325,6 +423,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
                 }
             }
         }
+        */
     }
     return solved;
 }
@@ -339,7 +438,6 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
     if (condensed.size()>4) { condensed = ParseMath(condensed); }
     while (computing)
     {
-        //PrintTokens(condensed);
         int operation_index=FirstEqualsIndex(condensed);
         if (operation_index>-1)
         {
@@ -349,6 +447,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
                 Token solved = SolveEquals(operation_index, condensed);
                 if (solved.GetValue()!=SyntaxGlobal::unsolved_problem)
                 {
+                    // Replace Statement With Token (type new_variable = value)
                     for (int c=0; c<4; c++)
                     {
                         condensed.erase(condensed.begin()+(operation_index-2));
@@ -363,6 +462,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
                 Token solved = SolveEquals(operation_index, condensed);
                 if (solved.GetValue()!=SyntaxGlobal::unsolved_problem)
                 {
+                    // Replace Statement With Token (existing_variable = value)
                     for (int c=0; c<3; c++)
                     {
                         condensed.erase(condensed.begin()+(operation_index-1));
@@ -373,17 +473,18 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
             }
         }
         else { computing=false; break; }
-        //PrintTokens(condensed);
     }
     if (has_operation)
     {
         for (int i=0; i<int(condensed.size()); i++)
         {
             std::string name = condensed.at(i).GetName();
-            if (name!="" && name!=SyntaxGlobal::unsolved_problem) { PushVariable(condensed.at(i)); }
+            if (name!="" && name!=SyntaxGlobal::unsolved_problem)
+            {
+                PushVariable(condensed.at(i));
+            }
         }
     }
-    //PrintTokens(condensed);
     return condensed;
 }
 
