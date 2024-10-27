@@ -20,7 +20,7 @@ void Shell::PrintShellWarning(std::string text)
 
 void Shell::PrintShellError(std::string text)
 {
-    if (output_errors) { std::cout<<GetColorString("Error: ",255,0,0)+GetColorString(text,255,255,0)<<std::endl; }
+    if (output_errors) { std::cout<<GetColorString("Error: ",255,0,0)+GetColorString(text,255,255,0)<<std::endl; SetUserEngaged(false); }
 }
 
 void Shell::PrintShellCall(std::string call, std::string text)
