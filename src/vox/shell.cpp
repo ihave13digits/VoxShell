@@ -57,11 +57,14 @@ void Shell::PrintTokens(std::vector<Token> tokens)
 void Shell::PrintState()
 {
     const int R=64,G=0,B=128, _R=255,_G=255,_B=255;
+    std::vector<Block> blocks = stack.GetBlocks();
+    std::vector<Token> vars = stack.GetVariables();
     std::cout << GetColorString("Scope:", R,G,B) << GetColorString(std::to_string(current_scope), _R,_G,_B);
     std::cout << GetColorString(" Stack:", R,G,B) << GetColorString(std::to_string(stack.GetSize()), _R,_G,_B);
-    std::cout << GetColorString(" Blocks:", R,G,B) << GetColorString(std::to_string(stack.GetBlocks().size()), _R,_G,_B);
-    std::cout << GetColorString(" Variables:", R,G,B)<< GetColorString(std::to_string(stack.GetVariables().size()), _R,_G,_B);
+    std::cout << GetColorString(" Blocks:", R,G,B) << GetColorString(std::to_string(blocks.size()), _R,_G,_B);
+    std::cout << GetColorString(" Variables:", R,G,B)<< GetColorString(std::to_string(vars.size()), _R,_G,_B);
     std::cout << std::endl;
+    PrintTokens(vars);
 }
 
 

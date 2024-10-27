@@ -318,7 +318,7 @@ std::vector<Token> Shell::ParseEquals(std::vector<Token> tokens)
     for (int i=0; i<int(condensed.size()); i++)
     {
         std::string name = condensed.at(i).GetName();
-        if (name!="" && name!=SyntaxGlobal::unsolved_problem) { PushVariable(condensed.at(i)); }
+        if (name!="" && name!=SyntaxGlobal::unsolved_problem && !stack.VariableNameExists(name)) { PrintShellWarning("Pushing Variable"); PushVariable(condensed.at(i)); }
         /*else if (name==SyntaxGlobal::unsolved_problem)
         {
             std::cout<<"- ERROR START -"<<std::endl;
