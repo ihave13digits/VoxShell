@@ -42,16 +42,19 @@ void Shell::PrintShellCall(std::string call, std::string text)
 void Shell::PrintTokens(std::vector<Token> tokens)
 {
     const int R=0,G=128,B=64, _R=255,_G=255,_B=255;
-    //std::cout << "----------------------------------------------------------------" << std::endl;
     for (int i=0; i<int(tokens.size()); i++)
     {
-        std::cout << GetColorString("(", R,G,B) << GetColorString(tokens[i].GetValue(), _R,_G,_B) << GetColorString(") Type[", R,G,B);
-        std::cout << GetColorString(SyntaxType::keys[tokens[i].GetType()], _R,_G,_B) << GetColorString("] Name[", R,G,B);
-        std::cout << GetColorString(tokens[i].GetName(), _R,_G,_B) << GetColorString("] @ Index:", R,G,B);
-        std::cout << GetColorString(std::to_string(tokens[i].GetIndex()), _R,_G,_B) << std::endl;
+        std::cout << GetColorString("(", R,G,B)
+            << GetColorString(tokens[i].GetValue(), _R,_G,_B)
+            << GetColorString(") Type[", R,G,B)
+            << GetColorString(SyntaxType::keys[tokens[i].GetType()], _R,_G,_B)
+            << GetColorString("] Name[", R,G,B)
+            << GetColorString(tokens[i].GetName(), _R,_G,_B)
+            << GetColorString("] @ Index:", R,G,B)
+            << GetColorString(std::to_string(tokens[i].GetIndex()), _R,_G,_B)
+            << std::endl;
     }
     std::cout << std::endl;
-    //std::cout << "----------------------------------------------------------------" << std::endl;
 }
 
 void Shell::PrintState()
@@ -59,11 +62,15 @@ void Shell::PrintState()
     const int R=64,G=0,B=128, _R=255,_G=255,_B=255;
     std::vector<Block> blocks = stack.GetBlocks();
     std::vector<Token> vars = stack.GetVariables();
-    std::cout << GetColorString("Scope:", R,G,B) << GetColorString(std::to_string(current_scope), _R,_G,_B);
-    std::cout << GetColorString(" Stack:", R,G,B) << GetColorString(std::to_string(stack.GetSize()), _R,_G,_B);
-    std::cout << GetColorString(" Blocks:", R,G,B) << GetColorString(std::to_string(blocks.size()), _R,_G,_B);
-    std::cout << GetColorString(" Variables:", R,G,B)<< GetColorString(std::to_string(vars.size()), _R,_G,_B);
-    std::cout << std::endl;
+    std::cout << GetColorString("Scope:", R,G,B)
+        << GetColorString(std::to_string(current_scope), _R,_G,_B)
+        << GetColorString(" Stack:", R,G,B)
+        << GetColorString(std::to_string(stack.GetSize()), _R,_G,_B)
+        << GetColorString(" Blocks:", R,G,B)
+        << GetColorString(std::to_string(blocks.size()), _R,_G,_B)
+        << GetColorString(" Variables:", R,G,B)
+        << GetColorString(std::to_string(vars.size()), _R,_G,_B)
+        << std::endl;
     PrintTokens(vars);
 }
 
@@ -164,8 +171,9 @@ bool Shell::HasFunction(std::vector<Token> tokens)
 void Shell::RegisterFunction(std::string name, Generic::Function f)
 {
     PrintShellCall("RegisterFunction", name);
+    // Make Sure The Function Is Unique (Until Namespacing Is Implemented)
     if (functions.count(name)==0) { functions.emplace(name, f); }
-    else { std::cout << SyntaxGlobal::function_exists << std::endl; }
+    else { PrintShellError("Function '"+name+"' Already Exists"); }
 }
 
 void Shell::RegisterLibrary(std::map<std::string, Generic::Function> _functions)
@@ -180,6 +188,7 @@ void Shell::RegisterLibrary(std::map<std::string, Generic::Function> _functions)
 
 bool Shell::IsBreakPoint(std::string character)
 {
+    // Check For Syntax Keys
     for (int k=0; k<int(Syntax::keys.size()); k++)
     {
         if (character==Syntax::keys[k])
@@ -187,6 +196,7 @@ bool Shell::IsBreakPoint(std::string character)
             return true;
         }
     }
+    // Check For Operator Keys
     for (int k=0; k<int(Operator::keys.size()); k++)
     {
         if (character==Operator::keys[k])
@@ -203,6 +213,7 @@ int Shell::GetTokenType(std::string segment)
     {
         return SyntaxType::TYPE_INVALID;
     }
+    // If The Size Is One, It's Likely An Operator Or Generic Syntax Glyph
     if (segment.size()==1)
     {
         for (int k=0; k<int(Syntax::keys.size()); k++)
@@ -220,10 +231,12 @@ int Shell::GetTokenType(std::string segment)
             }
         }
     }
+    // Check For Built-In Functions
     if (FunctionExists(segment))
     {
         return SyntaxType::TYPE_BUILT_IN;
     }
+    // Check For Variable Setting
     for (int k=0; k<int(ReturnType::keys.size()); k++)
     {
         if (segment==ReturnType::keys[k])
@@ -231,8 +244,10 @@ int Shell::GetTokenType(std::string segment)
             return SyntaxType::TYPE_RETURN;
         }
     }
+    // Check For Numeric Values
     if      (IsStringInteger(segment)) { return SyntaxType::TYPE_INTEGER; }
     else if (IsStringDecimal(segment)) { return SyntaxType::TYPE_DECIMAL; }
+    // Lastly, We Check For Booleans, Since It Can Also Be Represented As An Integer
     for (int k=0; k<int(Boolean::keys.size()); k++)
     {
         if (segment==Boolean::keys[k])
@@ -252,10 +267,13 @@ int Shell::GetTokenType(std::string segment)
 bool Shell::IsStringInteger(std::string text)
 {
     bool is_valid = true;
+    // Early Return
     if (text.size()>1 && text.at(0)=='0') { return false; }
+    // Loop Over Characters
     for (int i=0; i<int(text.size()); i++)
     {
         char c = text.at(i);
+        // If The Character Isn't A Number, Let's Just Return Early
         if (!std::isdigit(c))
         {
             return false;
@@ -269,16 +287,15 @@ bool Shell::IsStringDecimal(std::string text)
     bool is_valid = true;
     int decimal_count = 0;
     int decimal_index = text.size();
+    // Loop Over Characters
     for (int i=0; i<int(text.size()); i++)
     {
         char c = text.at(i);
+        // Check If The Character Isn't A number
         if (!std::isdigit(c))
         {
-            if (i==0 && c=='-')
-            {
-                
-            }
-            else if (c=='.')
+            // Count The Decimals To Validate Floating Point Number
+            if (c=='.')
             {
                 decimal_count++;
                 if (decimal_count>1) { return false; }
@@ -290,6 +307,7 @@ bool Shell::IsStringDecimal(std::string text)
             }
         }
     }
+    // The < 1.0 Edge Case
     if (text.size()>1 && text.at(0)=='0' && decimal_index!=1) { return false; }
     return is_valid;
 }
