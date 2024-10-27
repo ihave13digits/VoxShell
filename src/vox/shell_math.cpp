@@ -174,80 +174,84 @@ Token Shell::SolveMath(Token a, Token b, Token o)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_BOOLEAN);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(int(pow(va, vb)))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(va%vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { bool check=va==vb; token.SetValue(std::to_string(check)); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { bool check=va!=vb; token.SetValue(std::to_string(check)); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { bool check=va<vb; token.SetValue(std::to_string(check)); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { bool check=va>vb; token.SetValue(std::to_string(check)); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(int(pow(va, vb)))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(va%vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { bool check=va==vb; token.SetValue(std::to_string(check)); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { bool check=va!=vb; token.SetValue(std::to_string(check)); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { bool check=va<vb; token.SetValue(std::to_string(check)); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { bool check=va>vb; token.SetValue(std::to_string(check)); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { bool check=va<=vb; token.SetValue(std::to_string(check)); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { bool check=va>=vb; token.SetValue(std::to_string(check)); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=va&&vb; token.SetValue(std::to_string(check)); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=va||vb; token.SetValue(std::to_string(check)); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=va&&vb; token.SetValue(std::to_string(check)); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||vb; token.SetValue(std::to_string(check)); }
         }
         else if (b.GetType()==SyntaxType::TYPE_INTEGER)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_INTEGER);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(int(pow(va, vb)))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(va%vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { bool check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { bool check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { bool check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { bool check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(int(pow(va, vb)))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(va%vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { bool check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { bool check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { bool check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { bool check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { bool check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { bool check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
         {
             float vb = std::stof(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(pow(va, vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(va%int(vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { bool check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { bool check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { bool check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { bool check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(pow(va, vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(va%int(vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { bool check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { bool check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { bool check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { bool check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { bool check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { bool check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va)+vb); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { bool check=va==(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { bool check=va!=(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { bool check=int(va)<vb.size()>0; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { bool check=int(va)>vb.size()>0; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { bool check=int(va)<=vb.size()>0; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { bool check=int(va)>=vb.size()>0; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=va&&(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=va||(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else { token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN); token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN]); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va)+vb); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { bool check=va==(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { bool check=va!=(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=va&&(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
     }
     else if (a.GetType()==SyntaxType::TYPE_INTEGER)
@@ -257,74 +261,84 @@ Token Shell::SolveMath(Token a, Token b, Token o)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_BOOLEAN);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(int(pow(va, vb)))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(va%vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(int(pow(va, vb)))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(va%vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { int check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { int check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_INTEGER)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_INTEGER);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(int(pow(va, vb)))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(va%vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(int(pow(va, vb)))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(va%vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { int check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { int check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_INTEGER); }
             else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_INTEGER); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
         {
             float vb = std::stof(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(pow(va, vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(std::fmod(va,vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(pow(va, vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(std::fmod(va,vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { int check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { int check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va)+vb); }
-            else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
-            {
-            token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_INTEGER);
-            token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_INTEGER]);
-            }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va)+vb); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
     }
     else if (a.GetType()==SyntaxType::TYPE_DECIMAL)
@@ -334,74 +348,84 @@ Token Shell::SolveMath(Token a, Token b, Token o)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_BOOLEAN);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(int(pow(va, vb)))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(std::fmod(va,vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(int(pow(va, vb)))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(std::fmod(va,vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { int check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { int check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_INTEGER)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(pow(va, vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(std::fmod(va,vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(pow(va, vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(std::fmod(va,vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { int check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { int check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(Bstd::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
         {
             float vb = std::stof(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
-            if      (op==Operator::keys[Operator::OPERATOR_POW]) { token.SetValue(std::to_string(pow(va, vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_MUL]) { token.SetValue(std::to_string(va*vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_DIV]) { token.SetValue(std::to_string(va/vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_MOD]) { token.SetValue(std::to_string(std::fmod(va,vb))); }
-            else if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va+vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_SUB]) { token.SetValue(std::to_string(va-vb)); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { token.SetValue(std::to_string(pow(va, vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { token.SetValue(std::to_string(va*vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { token.SetValue(std::to_string(va/vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { token.SetValue(std::to_string(std::fmod(va,vb))); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va+vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { token.SetValue(std::to_string(va-vb)); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { int check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { int check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { int check=va<vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { int check=va>vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { int check=va<=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { int check=va>=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { float check=va&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { float check=va|vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
         else if (b.GetType()==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(std::to_string(va)+vb); }
-            else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
-            {
-            token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_DECIMAL);
-            token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_DECIMAL]);
-            }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(std::to_string(va)+vb); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
     }
     else if (a.GetType()==SyntaxType::TYPE_STRING)
@@ -411,50 +435,85 @@ Token Shell::SolveMath(Token a, Token b, Token o)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+vb); }
-            else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
-            {
-                token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN);
-                token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_BOOLEAN]);
-            }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(va+vb); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
         else if (b.GetType()==SyntaxType::TYPE_INTEGER)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+vb); }
-            else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
-            {
-                token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_INTEGER);
-                token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_INTEGER]);
-            }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(va+vb); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
         else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+vb); }
-            else //{ token.SetValue(SyntaxGlobal::unsolved_problem); }
-            {
-                token.SetType(SyntaxType::TYPE_ERROR_STRING_LOGIC_DECIMAL);
-                token.SetValue(SyntaxType::keys[SyntaxType::TYPE_ERROR_STRING_LOGIC_DECIMAL]);
-            }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(va+vb); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
         else if (b.GetType()==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
-            if (op==Operator::keys[Operator::OPERATOR_ADD]) { token.SetValue(va+vb); }
-            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])  { bool check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])  { bool check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_LESSER])  { bool check=va.size()<vb.size(); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            else if (op==Operator::keys[Operator::OPERATOR_GREATER]) { bool check=va.size()>vb.size(); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MUL])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_DIV])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_MOD])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_ADD])           { token.SetValue(va+vb); }
+            else if (op==Operator::keys[Operator::OPERATOR_SUB])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_EQUALS])        { bool check=va==vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_NOT_EQUAL])     { bool check=va!=vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_LESSER])        { bool check=va.size()<vb.size(); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
+            else if (op==Operator::keys[Operator::OPERATOR_GREATER])       { bool check=va.size()>vb.size(); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_LESSER_EQUAL])  { bool check=va.size()<=vb.size(); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_GREATER_EQUAL]) { bool check=va.size()>=vb.size(); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { int check=va&vb; token.SetValue(Boolean::keys[check]); }
-            //else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { int check=va|vb; token.SetValue(Boolean::keys[check]); }
-            else if (op==Operator::keys[Operator::OPERATOR_AND])     { bool check=((int(va.size())>0)&&(vb.size()>0)); token.SetValue(Boolean::keys[check]); }
-            else if (op==Operator::keys[Operator::OPERATOR_OR])      { bool check=((int(va.size())>0)||(vb.size()>0)); token.SetValue(Boolean::keys[check]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_AND])     { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_LOGIC_OR])      { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
+            else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=((int(va.size())>0)&&(vb.size()>0)); token.SetValue(Boolean::keys[check]); }
+            else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=((int(va.size())>0)||(vb.size()>0)); token.SetValue(Boolean::keys[check]); }
         }
     }
     return token;
