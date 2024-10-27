@@ -4,9 +4,11 @@
 
 inline bool Shell::HasOperation(std::vector<Token> tokens)
 {
+    // Loop Through Tokens
     for (int i=0; i<int(tokens.size()); i++)
     {
         std::string value = tokens[i].GetValue();
+        // Check For Operator
         if (value==Operator::keys[Operator::OPERATOR_ADD] ||
             value==Operator::keys[Operator::OPERATOR_SUB] ||
             value==Operator::keys[Operator::OPERATOR_MUL] ||
@@ -20,9 +22,11 @@ inline bool Shell::HasOperation(std::vector<Token> tokens)
 
 inline bool Shell::HasLogic(std::vector<Token> tokens)
 {
+    // Loop Through Tokens
     for (int i=0; i<int(tokens.size()); i++)
     {
         std::string value = tokens[i].GetValue();
+        // Check For Operator
         if (value==Operator::keys[Operator::OPERATOR_SET] ||
             value==Operator::keys[Operator::OPERATOR_NOT] ||
             value==Operator::keys[Operator::OPERATOR_LESSER] ||
@@ -44,25 +48,31 @@ inline int Shell::FirstOperationIndex(std::vector<Token> tokens, int state)
 {
     if (state==MathState::MATH_LOG) { return FirstLogicIndex(tokens); }
     int operation_index=-1;
+    // Loop Through Tokens
     for (int i=0; i<int(tokens.size()); i++)
     {
         std::string value = tokens[i].GetValue();
         bool is_op=tokens[i].GetType()==SyntaxType::TYPE_OPERATOR, L=false, R=false;
         if (i>0 && is_op) { L=CanComputeToken(tokens[i-1]); } if (i<int(tokens.size()-1) && is_op) { R=CanComputeToken(tokens[i+1]); }
+        // Check If It's A Valid Problem
         if ((L && R) || R)
         {
+            // Check Addition / Subtraction
             if      (state==MathState::MATH_A_S &&
                 (value==Operator::keys[Operator::OPERATOR_ADD] ||
                 value==Operator::keys[Operator::OPERATOR_SUB]))
             { operation_index = i; break; }
+            // Check Multiplication / Division / Modulo
             else if (state==MathState::MATH_M_D &&
                 ((value==Operator::keys[Operator::OPERATOR_MUL] ||
                 value==Operator::keys[Operator::OPERATOR_DIV]) ||
                 value==Operator::keys[Operator::OPERATOR_MOD]))
             { operation_index = i; break; }
+            // Check Exponents
             else if (state==MathState::MATH_POW &&
                 (value==Operator::keys[Operator::OPERATOR_POW]))
             { operation_index = i; break; }
+            // Check Logic
             else if (state>MathState::MATH_A_S &&
                 (value==Operator::keys[Operator::OPERATOR_SET] ||
                 value==Operator::keys[Operator::OPERATOR_NOT] ||
@@ -85,6 +95,7 @@ inline int Shell::FirstOperationIndex(std::vector<Token> tokens, int state)
 inline int Shell::FirstLogicIndex(std::vector<Token> tokens)
 {
     int operation_index=-1;
+    // Loop Through Tokens
     for (int i=0; i<int(tokens.size()); i++)
     {
         std::string value = tokens[i].GetValue();
@@ -93,10 +104,12 @@ inline int Shell::FirstLogicIndex(std::vector<Token> tokens)
         if (i<int(tokens.size()-1))
         {
             R=CanComputeToken(tokens[i+1]);
+            // Check For (<=, >=, !=, ||, &&)
             _R=(tokens[i+1].GetValue()==Operator::keys[Operator::OPERATOR_SET] ||
                 tokens[i+1].GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_AND] ||
                 tokens[i+1].GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_OR]);
         }
+        // Check For Operator Keys
         for (int o=Operator::OPERATOR_SET; o<=Operator::OPERATOR_EQUALS; o++)
         {
             if (value==Operator::keys[o] && ((L && R) || _R)) { operation_index = i; break; }
