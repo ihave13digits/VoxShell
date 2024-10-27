@@ -105,29 +105,6 @@ inline int Shell::FirstLogicIndex(std::vector<Token> tokens)
     return operation_index;
 }
 
-inline int Shell::FirstParenthesesIndex(std::vector<Token> tokens)
-{
-    int operation_index=-1, left_index=-1;
-    for (int i=0; i<int(tokens.size()); i++)
-    {
-        bool left_is_func = false;
-        if (i>0) { left_is_func = HasFunction({tokens.at(i-1)}); }
-        std::string value = tokens[i].GetValue();
-        if (value==Operator::keys[Operator::OPERATOR_PAR_L] && !left_is_func)
-        {
-            left_index = i;
-        }
-        else if (value==Operator::keys[Operator::OPERATOR_PAR_R])
-        {
-            if (left_index>-1)
-            {
-                return left_index;
-            }
-        }
-    }
-    return operation_index;
-}
-
 inline bool Shell::CanComputeToken(Token token)
 {
     //const int T = token.GetType();
@@ -477,6 +454,7 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
     int math_state = MathState::MATH_PAR, operation_index;
     while (computing)
     {
+        // Early Return
         if (!HasOperation(condensed)) { break; }
         operation_index = FirstOperationIndex(condensed, math_state);
         const int left_index = operation_index-1, right_index = operation_index+1;
@@ -491,10 +469,12 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
                 solved = SolveMath(condensed.at(left_index), condensed.at(right_index), condensed.at(operation_index));
                 if (solved.GetValue()!=SyntaxGlobal::unsolved_problem)
                 {
+                    // Cull Problem
                     for (int c=0; c<3; c++)
                     {
                         condensed.erase(condensed.begin()+left_index);
                     }
+                    // Insert Solution
                     condensed.insert(condensed.begin()+(left_index), solved);
                 }
                 else { math_state++; if (math_state>MathState::MATH_LOG) { computing = false; break; } }
@@ -505,14 +485,17 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
                 solved = SolveUnary(condensed.at(right_index), condensed.at(operation_index));
                 if (solved.GetValue()!=SyntaxGlobal::unsolved_problem)
                 {
+                    // Cull Problem
                     for (int c=0; c<2; c++)
                     {
                         condensed.erase(condensed.begin()+(operation_index));
                     }
+                    // Insert Solution
                     condensed.insert(condensed.begin()+(operation_index), solved);
                 }
                 else { math_state++; if (math_state>MathState::MATH_LOG) { computing = false; break; } }
             }
+            // TODO: Clean This Up By Parsing Logic Operators Separately (!=, <=, >=, &&, ||)
             // Logic Problem
             else
             {
@@ -530,29 +513,35 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
                         if (operation>-1)
                         {
                             solved = Token(condensed[operation_index].GetIndex(), condensed[operation_index].GetType(), check);
+                            // Cull Problem
                             for (int c=0; c<2; c++)
                             {
                                 condensed.erase(condensed.begin()+(operation_index));
                             }
+                            // Insert Solution
                             condensed.insert(condensed.begin()+(operation_index), solved);
                         }
                     }
                     else if (_R==Operator::keys[Operator::OPERATOR_LOGIC_AND] && condensed[operation_index].GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_AND])
                     {
                         solved = Token(condensed[operation_index].GetIndex(), condensed[operation_index].GetType(), Operator::keys[Operator::OPERATOR_AND]);
+                        // Cull Problem
                         for (int c=0; c<2; c++)
                         {
                             condensed.erase(condensed.begin()+(operation_index));
                         }
+                        // Insert Solution
                         condensed.insert(condensed.begin()+(operation_index), solved);
                     }
                     else if (_R==Operator::keys[Operator::OPERATOR_LOGIC_OR] && condensed[operation_index].GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_OR])
                     {
                         solved = Token(condensed[operation_index].GetIndex(), condensed[operation_index].GetType(), Operator::keys[Operator::OPERATOR_OR]);
+                        // Cull Problem
                         for (int c=0; c<2; c++)
                         {
                             condensed.erase(condensed.begin()+(operation_index));
                         }
+                        // Insert Solution
                         condensed.insert(condensed.begin()+(operation_index), solved);
                     }
                 }
@@ -560,6 +549,7 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
         }
         else
         {
+            // Continue Through Order Of Operations
             math_state++; if (math_state>MathState::MATH_LOG) { computing = false; break; }
         }
     }
@@ -576,14 +566,18 @@ std::vector<Token> Shell::ParseMath(std::vector<Token> tokens)
     {
         bool left_is_func = false;
         left_index=-1; right_index=-1;
+        // Check For Parentheses
         for (int i=0; i<int(condensed.size()); i++)
         {
+            // Make Sure We're Not Parsing Function Arguments
             if (left_index>0) { left_is_func = HasFunction({condensed.at(left_index-1)}); }
             std::string value = condensed.at(i).GetValue();
+            // Set The Left Index
             if (value==Operator::keys[Operator::OPERATOR_PAR_L] && left_is_func==false)
             {
                 left_index = i;
             }
+            // Set The Right Index
             else if (value==Operator::keys[Operator::OPERATOR_PAR_R] && left_is_func==false)
             {
                 if (left_index>-1)
@@ -593,9 +587,11 @@ std::vector<Token> Shell::ParseMath(std::vector<Token> tokens)
                 }
             }
         }
+        // Parse The Current Chunk
         std::vector<Token> chunk;
         if (left_index>-1 && right_index>left_index)
         {
+            // Cull Problem
             for (int i=left_index; i<=right_index; i++)
             {
                 Token t = condensed.at(left_index);
@@ -603,6 +599,7 @@ std::vector<Token> Shell::ParseMath(std::vector<Token> tokens)
                 if (value!=Operator::keys[Operator::OPERATOR_PAR_L] && value!=Operator::keys[Operator::OPERATOR_PAR_R]) { chunk.push_back(t); }
                 condensed.erase(condensed.begin()+left_index);
             }
+            // Insert Solution
             std::vector<Token> solved = ParseMathChunk(chunk);
             for (int i=0; i<int(solved.size()); i++)
             {

@@ -75,7 +75,6 @@ public:
     bool HasLogic(std::vector<Token> tokens);
     int FirstOperationIndex(std::vector<Token> tokens, int state);
     int FirstLogicIndex(std::vector<Token> tokens);
-    int FirstParenthesesIndex(std::vector<Token> tokens);
     bool CanComputeToken(Token token);
     Token SolveUnary(Token a, Token o);
     Token SolveMath(Token a, Token b, Token o);
