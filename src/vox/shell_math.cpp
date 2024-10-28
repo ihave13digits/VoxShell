@@ -2,7 +2,7 @@
 #include <cmath>
 #include "shell.h"
 
-inline bool Shell::HasOperation(std::vector<Token> tokens)
+bool Shell::HasOperation(std::vector<Token> tokens)
 {
     // Loop Through Tokens
     for (int i=0; i<int(tokens.size()); i++)
@@ -103,11 +103,12 @@ inline int Shell::FirstLogicIndex(std::vector<Token> tokens)
         if (i>0) { L=CanComputeToken(tokens[i-1]); }
         if (i<int(tokens.size()-1))
         {
-            R=CanComputeToken(tokens[i+1]);
+            Token right_token = tokens.at(i+1);
+            R=CanComputeToken(right_token);
             // Check For (<=, >=, !=, ||, &&)
-            _R=(tokens[i+1].GetValue()==Operator::keys[Operator::OPERATOR_SET] ||
-                tokens[i+1].GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_AND] ||
-                tokens[i+1].GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_OR]);
+            _R=(right_token.GetValue()==Operator::keys[Operator::OPERATOR_SET] ||
+                right_token.GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_AND] ||
+                right_token.GetValue()==Operator::keys[Operator::OPERATOR_LOGIC_OR]);
         }
         // Check For Operator Keys
         for (int o=Operator::OPERATOR_SET; o<=Operator::OPERATOR_EQUALS; o++)
@@ -167,10 +168,13 @@ Token Shell::SolveMath(Token a, Token b, Token o)
     std::string name = a.GetName(); if (name=="" || name==SyntaxGlobal::unsolved_problem) { name=b.GetName(); }
     Token token = Token(a.GetIndex(), a.GetType(), SyntaxGlobal::unsolved_problem, name);
     std::string op = o.GetValue();
-    if (a.GetType()==SyntaxType::TYPE_BOOLEAN)
+    int a_type=a.GetType(), b_type=b.GetType();
+    // Solve Boolean Math
+    if (a_type==SyntaxType::TYPE_BOOLEAN)
     {
+        // Boolean And Boolean
         int va = std::stoi(a.GetValue());
-        if      (b.GetType()==SyntaxType::TYPE_BOOLEAN)
+        if      (b_type==SyntaxType::TYPE_BOOLEAN)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_BOOLEAN);
@@ -191,7 +195,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=va&&vb; token.SetValue(std::to_string(check)); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||vb; token.SetValue(std::to_string(check)); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_INTEGER)
+        // Boolean And Integer
+        else if (b_type==SyntaxType::TYPE_INTEGER)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_INTEGER);
@@ -212,7 +217,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
+        // Boolean And Float
+        else if (b_type==SyntaxType::TYPE_DECIMAL)
         {
             float vb = std::stof(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
@@ -233,7 +239,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { bool check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_STRING)
+        // Boolean And String
+        else if (b_type==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
             if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
@@ -254,10 +261,12 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { bool check=va||(vb.size()>0); token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
     }
-    else if (a.GetType()==SyntaxType::TYPE_INTEGER)
+    // Solve Integer Math
+    else if (a_type==SyntaxType::TYPE_INTEGER)
     {
+        // Integer And Boolean
         int va = std::stoi(a.GetValue());
-        if      (b.GetType()==SyntaxType::TYPE_BOOLEAN)
+        if      (b_type==SyntaxType::TYPE_BOOLEAN)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_BOOLEAN);
@@ -278,7 +287,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_INTEGER)
+        // Integer And Integer
+        else if (b_type==SyntaxType::TYPE_INTEGER)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_INTEGER);
@@ -299,7 +309,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
+        // Integer And Float
+        else if (b_type==SyntaxType::TYPE_DECIMAL)
         {
             float vb = std::stof(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
@@ -320,7 +331,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_STRING)
+        // Integer And String
+        else if (b_type==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
             if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
@@ -341,10 +353,12 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
     }
-    else if (a.GetType()==SyntaxType::TYPE_DECIMAL)
+    // Solve Float Math
+    else if (a_type==SyntaxType::TYPE_DECIMAL)
     {
+        // Float And Boolean
         float va = std::stof(a.GetValue());
-        if      (b.GetType()==SyntaxType::TYPE_BOOLEAN)
+        if      (b_type==SyntaxType::TYPE_BOOLEAN)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_BOOLEAN);
@@ -365,7 +379,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_INTEGER)
+        // Float And Integer
+        else if (b_type==SyntaxType::TYPE_INTEGER)
         {
             int vb = std::stoi(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
@@ -386,7 +401,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
+        // Float And Float
+        else if (b_type==SyntaxType::TYPE_DECIMAL)
         {
             float vb = std::stof(b.GetValue());
             token.SetType(SyntaxType::TYPE_DECIMAL);
@@ -407,7 +423,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { int check=va&&vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { int check=va||vb; token.SetValue(std::to_string(check)); token.SetType(SyntaxType::TYPE_BOOLEAN); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_STRING)
+        // Float And String
+        else if (b_type==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
             if      (op==Operator::keys[Operator::OPERATOR_POW])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
@@ -428,10 +445,12 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
     }
-    else if (a.GetType()==SyntaxType::TYPE_STRING)
+    // Solve String Math
+    else if (a_type==SyntaxType::TYPE_STRING)
     {
         std::string va = a.GetValue();
-        if      (b.GetType()==SyntaxType::TYPE_BOOLEAN)
+        // String And Boolean
+        if      (b_type==SyntaxType::TYPE_BOOLEAN)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
@@ -452,7 +471,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_INTEGER)
+        // String And Integer
+        else if (b_type==SyntaxType::TYPE_INTEGER)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
@@ -473,7 +493,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_DECIMAL)
+        // String And Decimal
+        else if (b_type==SyntaxType::TYPE_DECIMAL)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
@@ -494,7 +515,8 @@ Token Shell::SolveMath(Token a, Token b, Token o)
             else if (op==Operator::keys[Operator::OPERATOR_AND])           { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
             else if (op==Operator::keys[Operator::OPERATOR_OR])            { PrintShellError("Cannot Perform Operation "+op+" On "+SyntaxType::keys[b.GetType()]); }
         }
-        else if (b.GetType()==SyntaxType::TYPE_STRING)
+        // String And String
+        else if (b_type==SyntaxType::TYPE_STRING)
         {
             std::string vb = b.GetValue();
             token.SetType(SyntaxType::TYPE_STRING);
@@ -625,7 +647,6 @@ std::vector<Token> Shell::ParseMathChunk(std::vector<Token> tokens)
             math_state++; if (math_state>MathState::MATH_LOG) { computing = false; break; }
         }
     }
-    //PrintTokens(condensed);
     return condensed;
 }
 
@@ -679,8 +700,6 @@ std::vector<Token> Shell::ParseMath(std::vector<Token> tokens)
             }
         }
         else { condensed = ParseMathChunk(condensed); computing = false; break; }
-        //PrintTokens(condensed);
     }
-    //PrintTokens(condensed);
     return condensed;
 }
