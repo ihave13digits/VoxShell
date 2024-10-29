@@ -61,12 +61,12 @@ void Shell::PrintTokens(std::vector<Token> tokens)
 void Shell::PrintState()
 {
     const int R=64,G=0,B=128, _R=255,_G=255,_B=255;
-    std::vector<Block> blocks = stack.GetBlocks();
-    std::vector<Token> vars = stack.GetVariables();
+    std::vector<Block> blocks = stack.GetBlocks(current_scope);
+    std::vector<Token> vars = stack.GetVariables(current_scope);
     std::cout << GetColorString("Scope:", R,G,B)
         << GetColorString(std::to_string(current_scope), _R,_G,_B)
         << GetColorString(" Stack:", R,G,B)
-        << GetColorString(std::to_string(stack.GetSize()), _R,_G,_B)
+        << GetColorString(std::to_string(stack.GetSize(current_scope)), _R,_G,_B)
         << GetColorString(" Blocks:", R,G,B)
         << GetColorString(std::to_string(blocks.size()), _R,_G,_B)
         << GetColorString(" Variables:", R,G,B)
@@ -91,27 +91,27 @@ void Shell::SetUserEngaged(bool value)
 
 bool Shell::VariableExists(std::string name)
 {
-    return (stack.VariableNameExists(name));
+    return (stack.VariableNameExists(name, current_scope));
 }
 
 void Shell::DeleteVariable(std::string name)
 {
-    stack.DeleteVariable(name);
+    stack.DeleteVariable(name, current_scope);
 }
 
 Token Shell::GetVariable(std::string name)
 {
-    return stack.GetVariable(name);
+    return stack.GetVariable(name, current_scope);
 }
 
 void Shell::SetVariable(std::string name, Token value)
 {
-    stack.SetVariable(name, value);
+    stack.SetVariable(name, value, current_scope);
 }
 
 void Shell::PushVariable(Token value)
 {
-    stack.PushVariable(value);
+    stack.PushVariable(value, current_scope);
 }
 
 void Shell::ClearStack()

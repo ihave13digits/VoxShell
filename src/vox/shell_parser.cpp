@@ -65,7 +65,7 @@ std::vector<Token> Shell::ParseVariables(std::vector<Token> tokens)
         Token token = tokens.at(i);
         if (token.GetType()==SyntaxType::TYPE_UNKNOWN && VariableExists(token.GetValue()))
         {
-            condensed.push_back(stack.GetVariable(token.GetValue()));
+            condensed.push_back(stack.GetVariable(token.GetValue(), current_scope));
         }
         else { condensed.push_back(token); }
     }
@@ -94,7 +94,7 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     std::string type_value=v_type.GetValue();
     std::string val_name = v_value.GetValue(), var_name = v_name.GetValue(), _var_name = v_name.GetName();
     Token solved = Token(token_index, value_type, val_name, SyntaxGlobal::unsolved_problem);
-    if (type_type==SyntaxType::TYPE_RETURN && !stack.VariableNameExists(var_name) && !stack.VariableNameExists(_var_name))
+    if (type_type==SyntaxType::TYPE_RETURN && !stack.VariableNameExists(var_name, current_scope) && !stack.VariableNameExists(_var_name, current_scope))
     {
         // Handle Boolean
         if (type_value==ReturnType::keys[ReturnType::RETURN_BOOLEAN] && value_type==SyntaxType::TYPE_BOOLEAN)
@@ -175,9 +175,9 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
             PrintShellError("Can't Assign Float Value To String Type");
         }
         // Handle Variable (This may need checks)
-        else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name))
+        else if (value_type==SyntaxType::TYPE_UNKNOWN && stack.VariableNameExists(val_name, current_scope))
         {
-            Token compare = stack.GetVariable(val_name);
+            Token compare = stack.GetVariable(val_name, current_scope);
             return Token(token_index, compare.GetType(), compare.GetValue(), var_name);
         }
         // Handle Function Returns
@@ -193,9 +193,9 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
     }
     else
     {
-        if (stack.VariableNameExists(var_name) && tokens.at(0).GetType()!=SyntaxType::TYPE_RETURN)
+        if (stack.VariableNameExists(var_name, current_scope) && tokens.at(0).GetType()!=SyntaxType::TYPE_RETURN)
         {
-            Token compare = stack.GetVariable(var_name);
+            Token compare = stack.GetVariable(var_name, current_scope);
             // Handle.. Wait What?  They Match?!
             if (compare.GetType()==v_value.GetType())
             {
@@ -282,9 +282,9 @@ Token Shell::SolveEquals(int operation_index, std::vector<Token> tokens)
                 PrintShellWarning("Couldn't Parse Variable");
             }
         }
-        else if (stack.VariableNameExists(_var_name) && tokens.at(0).GetType()!=SyntaxType::TYPE_RETURN)
+        else if (stack.VariableNameExists(_var_name, current_scope) && tokens.at(0).GetType()!=SyntaxType::TYPE_RETURN)
         {
-            Token compare = stack.GetVariable(_var_name);
+            Token compare = stack.GetVariable(_var_name, current_scope);
             // Handle.. Wait What?  They Match?!
             if (compare.GetType()==v_value.GetType())
             {
@@ -488,7 +488,7 @@ void Shell::ParseLine(std::string line)
     std::vector<Instruction> instructions = GenerateInstructions(tokens);
     for (int i=0; i<int(instructions.size()); i++)
     {
-        stack.PushBack(instructions[i]);
+        stack.PushBack(instructions[i], current_scope);
     }
 }
 
@@ -499,7 +499,7 @@ void Shell::ParseScript(Script script)
     std::vector<std::string> lines = script.GetLines();
     for (int i=0; i<int(lines.size()); i++)
     {
-        if (stack.GetSize()<stack_limit)
+        if (stack.GetSize(current_scope)<stack_limit)
         {
             std::string line = lines.at(i);
             if (line.size()>0) { ParseLine(line); }
@@ -588,13 +588,13 @@ void Shell::Evaluate(std::string line)
     std::string separator = GetColorString("----------------------------------------------------------------", 0,128,128);
     std::cout << separator << std::endl;
     ParseLine(line);
-    while (stack.GetSize()>0)
+    while (stack.GetSize(current_scope)>0)
     {
         if (!IsUserEngaged()) { ClearStack(); break; }
-        Instruction instruction = stack.GetNextInstruction();
+        Instruction instruction = stack.GetNextInstruction(current_scope);
         //PrintTokens(instruction.GetArguments());
         functions[instruction.GetState()].Call(instruction);
-        stack.PopFront();
+        stack.PopFront(current_scope);
         if (callback_count>stack_limit) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }
         callback_count++;
     }

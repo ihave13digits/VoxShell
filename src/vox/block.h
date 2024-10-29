@@ -20,32 +20,34 @@ private:
 
 public:
 
-    Block(int _scope, int _block_index, std::vector<Instruction> _stack={});
+    Block(int _scope, int _block_index);
 
-    int GetSize();
+    bool ShouldTraverse(int current_scope);
 
-    int GetScope();
-    void SetScope(int _scope);
+    int GetSize(int current_scope);
 
-    int GetBlockIndex();
-    void SetBlockIndex(int _block_index);
+    int GetScope(int current_scope);
+    void SetScope(int _scope, int current_scope);
 
-    void PopFront();
-    void PushBack(Instruction instruction);
+    int GetBlockIndex(int current_scope);
+    void SetBlockIndex(int _block_index, int current_scope);
 
-    bool VariableNameExists(std::string name);
-    void PushVariable(Token token);
-    void DeleteVariable(std::string name);
-    Token GetVariable(std::string name);
-    void SetVariable(std::string name, Token token);
-    std::vector<Token> GetVariables();
-    void SetVariables(std::unordered_map<std::string, Token> _variables);
+    void PopFront(int current_scope);
+    void PushBack(Instruction instruction, int current_scope);
+
+    bool VariableNameExists(std::string name, int current_scope);
+    void PushVariable(Token token, int current_scope);
+    void DeleteVariable(std::string name, int current_scope);
+    Token GetVariable(std::string name, int current_scope);
+    void SetVariable(std::string name, Token token, int current_scope);
+    std::vector<Token> GetVariables(int current_scope);
+    void SetVariables(std::unordered_map<std::string, Token> _variables, int current_scope);
     
-    std::vector<Block> GetBlocks();
-    void SetBlocks(std::vector<Block> _blocks);
-    void PushBlock(Block _block);
+    std::vector<Block> GetBlocks(int current_scope);
+    void SetBlocks(std::vector<Block> _blocks, int current_scope);
+    void PushBlock(Block _block, int current_scope);
     
-    Instruction GetNextInstruction();
+    Instruction GetNextInstruction(int current_scope);
 
 };
 
