@@ -1,0 +1,37 @@
+float a = 0.0;
+float b = 1.0;
+
+seed(0);
+a = (rand() % 10000) * 0.0001;
+b = (rand() % 10000) * 0.0001;
+
+echo("cos(" a ") = " cos(a) "\n");
+echo("sin(" a ") = " sin(a) "\n");
+echo("tan(" a ") = " tan(a) "\n");
+
+echo("acos(" a ") = " acos(a) "\n");
+echo("asin(" a ") = " asin(a) "\n");
+echo("atan(" a ") = " atan(a) "\n");
+echo("atan2(" a " " b ") = " atan2(a b) "\n");
+
+echo("cosh(" a ") = " cosh(a) "\n");
+echo("sinh(" a ") = " sinh(a) "\n");
+echo("tanh(" a ") = " tanh(a) "\n");
+echo("acosh(" a ") = " acosh(a) "\n");
+echo("asinh(" a ") = " asinh(a) "\n");
+echo("atanh(" a ") = " atanh(a) "\n");
+
+echo("exp(" a ") = " exp(a) "\n");
+echo("log(" a ") = " log(a) "\n");
+echo("pow(" a " " b ") = " pow(a b) "\n");
+echo("sqrt(" a ") = " sqrt(a) "\n");
+echo("cbrt(" a ") = " cbrt(a) "\n");
+
+echo("abs(" a ") = " abs(a) "\n");
+echo("ceil(" a ") = " ceil(a) "\n");
+echo("floor(" a ") = " floor(a) "\n");
+echo("fmod(" a " " b ") = " fmod(a b) "\n");
+echo("max(" a " " b ") = " max(a b) "\n");
+echo("min(" a " " b ") = " min(a b) "\n");
+
+delete(f);
