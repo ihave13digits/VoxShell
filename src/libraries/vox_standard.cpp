@@ -133,79 +133,66 @@ std::vector<Token> VoxStandard::ExecuteExit(Instruction instruction)
 
 std::vector<Token> VoxStandard::ExecuteFor(Instruction instruction)
 {
-    //Vox::shell.PrintTokens(instruction.GetArguments());
     Token iter = instruction.GetArgument(0);
     Token oper = instruction.GetArgument(1);
     Token comp = instruction.GetArgument(2);
     std::string var_name = iter.GetName();
     bool loop = false;
     Token replace;
+    if (comp.GetValue()==Operator::keys[Operator::OPERATOR_SET])
+    {
+        oper.SetValue(oper.GetValue()+comp.GetValue());
+        comp = instruction.GetArgument(3);
+    }
     if (Vox::shell.VariableExists(var_name))
     {
         replace = Vox::shell.GetVariable(var_name);
         std::string value = replace.GetValue();
-        if      (replace.GetType()==SyntaxType::TYPE_INTEGER)
+        if (replace.GetType()==SyntaxType::TYPE_INTEGER)
         {
-            if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]       )
+            int v = std::stoi(value);
+            if      (comp.GetType()==SyntaxType::TYPE_INTEGER)
             {
-                int v = std::stoi(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v< std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v< std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
+                int c = std::stoi(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); loop=true; }
             }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]      )
+            else if (comp.GetType()==SyntaxType::TYPE_DECIMAL)
             {
-                int v = std::stoi(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v> std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v> std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL] )
-            {
-                int v = std::stoi(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v<=std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v<=std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL])
-            {
-                int v = std::stoi(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v>=std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v>=std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
+                float c = std::stof(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); loop=true; }
             }
         }
         else if (replace.GetType()==SyntaxType::TYPE_DECIMAL)
         {
-            if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]       )
+            int v = std::stof(value);
+            if      (comp.GetType()==SyntaxType::TYPE_INTEGER)
             {
-                float v = std::stof(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v< std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v< std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
+                int c = std::stoi(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); loop=true; }
             }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]      )
+            else if (comp.GetType()==SyntaxType::TYPE_DECIMAL)
             {
-                float v = std::stof(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v> std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v> std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL] )
-            {
-                float v = std::stof(value); value = std::to_string(v+1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v<=std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v<=std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-            }
-            else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL])
-            {
-                float v = std::stof(value); value = std::to_string(v-1);
-                if      (comp.GetType()==SyntaxType::TYPE_INTEGER) { if (v>=std::stoi(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
-                else if (comp.GetType()==SyntaxType::TYPE_DECIMAL) { if (v>=std::stof(comp.GetValue())) { replace.SetValue(value); Vox::shell.SetVariable(var_name, replace); loop=true; } }
+                float c = std::stof(comp.GetValue());
+                if      (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER]        && v< c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER]       && v> c) { replace.SetValue(std::to_string(v-1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_LESSER_EQUAL]  && v<=c) { replace.SetValue(std::to_string(v+1)); loop=true; }
+                else if (oper.GetValue()==Operator::keys[Operator::OPERATOR_GREATER_EQUAL] && v>=c) { replace.SetValue(std::to_string(v-1)); loop=true; }
             }
         }
+        Vox::shell.SetVariable(var_name, replace);
     }
-    if (loop)
-    {
-        // Figure Out Pushing Block To Stack
-        
-        
-    }
-    return {};
+    if (loop) { /*Vox::shell.SetExpectingBlock(SyntaxGlobal::repeat_block, Vox::shell.GetInstructionIndex());*/ }
+    else      { /*Vox::shell.SetExpectingBlock(SyntaxGlobal::end_repeat_block, -1); */ }
+    return {Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(loop), "")};
 }
 
 std::vector<Token> VoxStandard::ExecuteIf(Instruction instruction)
