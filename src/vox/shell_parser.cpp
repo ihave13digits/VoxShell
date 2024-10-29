@@ -511,7 +511,7 @@ void Shell::ParseScript(Script script)
 std::vector<Instruction> Shell::GenerateInstructions(std::vector<Token> tokens)
 {
     PrintShellCall("GenerateInstructions", "");
-    //tokens = ParseBlocks(tokens);
+    tokens = ParseBlocks(tokens);
     tokens = ParseQuotes(tokens);
     tokens = ParseVariables(tokens);
     std::vector<Instruction> instructions;
@@ -593,6 +593,7 @@ void Shell::Evaluate(std::string line)
         if (!IsUserEngaged()) { ClearStack(); break; }
         Instruction instruction = stack.GetNextInstruction(current_scope);
         //PrintTokens(instruction.GetArguments());
+        //PrintState();
         functions[instruction.GetState()].Call(instruction);
         stack.PopFront(current_scope);
         if (callback_count>stack_limit) { std::cout << SyntaxType::keys[SyntaxType::TYPE_ERROR_STACK_LIMIT_REACHED] << std::endl; break; }

@@ -1,0 +1,13 @@
+int depth = 10;
+int result = 1;
+
+int i = 0;
+for(i < depth);
+{
+    result = result + result;
+}
+
+echo("Fibonacci Sequence (" depth ") = " result "\n");
+
+delete(depth result i);
+exit();
