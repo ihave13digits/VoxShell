@@ -47,18 +47,6 @@ void Block::SetBlockIndex(int _block_index, int current_scope)
     else { block_index = _block_index; }
 }
 
-void Block::PopFront(int current_scope)
-{
-    if (ShouldTraverse(current_scope)) { blocks.at(block_index).PopFront(current_scope); }
-    else { stack.erase(stack.begin()); }
-}
-
-void Block::PushBack(Instruction instruction, int current_scope)
-{
-    if (ShouldTraverse(current_scope)) { blocks.at(block_index).PushBack(instruction, current_scope); }
-    else { stack.push_back(instruction); }
-}
-
 
 
 bool Block::VariableNameExists(std::string name, int current_scope)
@@ -150,10 +138,25 @@ void Block::PushBlock(Block _block, int current_scope)
 
 
 
+void Block::PopFront(int current_scope)
+{
+    if (ShouldTraverse(current_scope)) { blocks.at(block_index).PopFront(current_scope); }
+    else //{ stack.erase(stack.begin()); }
+    {
+        instruction_index++;
+    }
+}
+
+void Block::PushBack(Instruction instruction, int current_scope)
+{
+    if (ShouldTraverse(current_scope)) { blocks.at(block_index).PushBack(instruction, current_scope); }
+    else { stack.push_back(instruction); }
+}
+
 Instruction Block::GetNextInstruction(int current_scope)
 {
     if (ShouldTraverse(current_scope)) { return blocks.at(block_index).GetNextInstruction(current_scope); }
     if (stack.size()<=0) { return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)}); }
-    Instruction instruction = stack.at(0);
+    Instruction instruction = stack.at(instruction_index);
     return instruction;
 }

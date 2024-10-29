@@ -13,7 +13,7 @@ class Block
 
 private:
 
-    int scope, block_index;
+    int scope, instruction_index=0, block_index=0;
     std::unordered_map<std::string, Token> variables;
     std::vector<Instruction> stack;
     std::vector<Block> blocks;
@@ -32,9 +32,6 @@ public:
     int GetBlockIndex(int current_scope);
     void SetBlockIndex(int _block_index, int current_scope);
 
-    void PopFront(int current_scope);
-    void PushBack(Instruction instruction, int current_scope);
-
     bool VariableNameExists(std::string name, int current_scope);
     void PushVariable(Token token, int current_scope);
     void DeleteVariable(std::string name, int current_scope);
@@ -46,6 +43,9 @@ public:
     std::vector<Block> GetBlocks(int current_scope);
     void SetBlocks(std::vector<Block> _blocks, int current_scope);
     void PushBlock(Block _block, int current_scope);
+
+    void PopFront(int current_scope);
+    void PushBack(Instruction instruction, int current_scope);
     
     Instruction GetNextInstruction(int current_scope);
 
