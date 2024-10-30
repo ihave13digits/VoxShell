@@ -7,8 +7,8 @@ std::map<std::string, Generic::Function> VoxStandard::functions =
     {"echi",      Generic::Function(-1, ReturnType::RETURN_STRING, VoxStandard::ExecuteEchi)},
     {"eval",      Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteEval)},
     {"exit",      Generic::Function( 0, ReturnType::RETURN_VOID, VoxStandard::ExecuteExit)},
-    {"for",       Generic::Function( 3, ReturnType::RETURN_VOID, VoxStandard::ExecuteFor)},
-    {"if",        Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteIf)},
+    {"for",       Generic::Function( 3, ReturnType::RETURN_CONTROL_FLOW, VoxStandard::ExecuteFor)},
+    {"if",        Generic::Function( 3, ReturnType::RETURN_CONTROL_FLOW, VoxStandard::ExecuteIf)},
     {"include",   Generic::Function( 1, ReturnType::RETURN_VOID, VoxStandard::ExecuteInclude)},
     {"to_string", Generic::Function( 1, ReturnType::RETURN_STRING, VoxStandard::ExecuteToString)},
 };
@@ -190,15 +190,19 @@ std::vector<Token> VoxStandard::ExecuteFor(Instruction instruction)
         }
         Vox::shell.SetVariable(var_name, replace);
     }
-    if (loop) { /*Vox::shell.SetExpectingBlock(SyntaxGlobal::repeat_block, Vox::shell.GetInstructionIndex());*/ }
-    else      { /*Vox::shell.SetExpectingBlock(SyntaxGlobal::end_repeat_block, -1); */ }
-    return {Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(loop), "")};
+    std::string id;
+    if (loop) { id=SyntaxGlobal::repeat_block; }
+    else      { id=""; }
+    return {Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(loop), id)};
 }
 
 std::vector<Token> VoxStandard::ExecuteIf(Instruction instruction)
 {
     std::string value = instruction.GetArgument(0).GetValue();
-    return {};
+    bool passed = false;
+    std::string id;
+    if (!passed) { id=SyntaxGlobal::ignore_block; }
+    return {Token(0, SyntaxType::TYPE_BOOLEAN, std::to_string(passed), id)};
 }
 
 std::vector<Token> VoxStandard::ExecuteInclude(Instruction instruction)

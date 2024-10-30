@@ -9,6 +9,8 @@ namespace SyntaxGlobal
 {
     extern std::string blank_instruction;
     extern std::string empty_block;
+    extern std::string ignore_block;
+    extern std::string repeat_block;
     extern std::string unsolved_problem;
 
     extern std::string source_is_direct;
@@ -73,6 +75,7 @@ namespace ReturnType
         RETURN_INTEGER,
         RETURN_DECIMAL,
         RETURN_STRING,
+        RETURN_CONTROL_FLOW,
     };
     
     extern std::vector<std::string> keys;

@@ -2,6 +2,8 @@
 
 std::string SyntaxGlobal::blank_instruction = "__InstructionIsBlank__";
 std::string SyntaxGlobal::empty_block = "__BlockIsEmpty__";
+std::string SyntaxGlobal::ignore_block = "__BlockIsToBeIgnored__";
+std::string SyntaxGlobal::repeat_block = "__BlockIsToBeRepeated__";
 std::string SyntaxGlobal::unsolved_problem = "__UnsolvedProblem__";
 
 std::string SyntaxGlobal::source_is_direct = "__SourceIsDirect__";
@@ -53,6 +55,7 @@ std::vector<std::string> ReturnType::keys =
     "int",
     "float",
     "string",
+    "__control_flow__"
 };
 
 std::vector<std::string> Operator::keys =
