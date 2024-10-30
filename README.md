@@ -2,6 +2,7 @@
 A simple scripting language and shell
 
 ## Features:
+- Variable Creation/Mutation
 - Math Parsing
 - String Parsing (Escape Codes)
 
