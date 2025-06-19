@@ -156,7 +156,7 @@ void Block::PushBack(Instruction instruction, int current_scope)
 Instruction Block::GetNextInstruction(int current_scope)
 {
     if (ShouldTraverse(current_scope)) { return blocks.at(block_index).GetNextInstruction(current_scope); }
-    if (stack.size()<=0) { return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)}); }
+    if (int(stack.size())<=0) { return Instruction(ReturnType::RETURN_VOID, 0, SyntaxGlobal::empty_block, {Token(0, 0, SyntaxGlobal::blank_instruction)}); }
     Instruction instruction = stack.at(instruction_index);
     return instruction;
 }
